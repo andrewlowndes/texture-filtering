@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+        window.onload = function() {
+            const appScript = document.createElement('script');
+            appScript.defer = true;
+            appScript.async = true;
+            appScript.src = "triangle_average_cpu.js";
+            document.head.appendChild(appScript);
+        };
+    </script>
+    <style>
+      .label-text {
+        display: inline-block;
+        vertical-align: middle;
+        width: 100px;
+      }
+
+      .control {
+        margin: 5px 0;
+      }
+
+      input[type="number"] {
+        width: 50px;
+      }
+
+      #report {
+        margin: 5px 0;
+        font-size: 110%;
+      }
+
+      #timetaken {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Triangle average evaluator - CPU</h2>
+
+    <p>Example of computing the precise coverage of a triangle on a texture surface, with float precision.</p>
+
+    <p>Note: impractical as-is for real-time use on a gpu with large numbers of triangles due to the number of samples required (similar to resolution of image)</p>
+    
+    <p>Note: the demo expects a triangle to be contained within the texture and does not cull automatically</p>
+
+    <div>
+      <canvas id="game" width="512" height="512"></canvas>
+    </div>
+
+    <div class="control">
+      <label>
+        <span class="label-text">Image:</span>
+        <select id="chooseimage">
+          <option selected value="media/photo.png">Photo</option>
+          <option value="media/test.png">Lines</option>
+          <option value="media/sample.png">Pattern</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="control">
+      <div id="report">
+        <div>Time taken: <span id="timetaken"></span></div>
+      </div>
+    </div>
+
+    <p>Controls: Move the mouse in the right canvas to move the triangle center, scale using the mouse wheel.</p>
+  </body>
+</html>

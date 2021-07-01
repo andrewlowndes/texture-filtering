@@ -1,0 +1,70 @@
+use std::f64::EPSILON;
+
+use crate::{maths::inverse_lerp, point::Point};
+
+pub struct Line {
+    pub p1: Point,
+    pub p2: Point,
+}
+
+impl Line {
+    pub fn length(&self) -> f64 {
+        self.dir().length()
+    }
+
+    pub fn dir(&self) -> Point {
+        self.p2 - self.p1
+    }
+
+    pub fn clip_rectangle(&self, min: Point, max: Point) -> Option<Line> {
+        let line = {
+            // vertical - just crop the y
+            if (self.p1.x - self.p2.x).abs() < EPSILON {
+                Line {
+                    p1: Point {
+                        x: self.p1.x,
+                        y: self.p1.y.clamp(min.y, max.y),
+                    },
+                    p2: Point {
+                        x: self.p2.x,
+                        y: self.p2.y.clamp(min.y, max.y),
+                    },
+                }
+            } else if (self.p1.y - self.p2.y).abs() < EPSILON {
+                // horizontal - just crop the x
+                Line {
+                    p1: Point {
+                        x: self.p1.x.clamp(min.x, max.x),
+                        y: self.p1.y,
+                    },
+                    p2: Point {
+                        x: self.p2.x.clamp(min.x, max.x),
+                        y: self.p2.y,
+                    },
+                }
+            } else {
+                let dir = self.dir();
+
+                let t1 = inverse_lerp(self.p1.x, dir.x, min.x).clamp(0.0, 1.0);
+                let t2 = inverse_lerp(self.p1.x, dir.x, max.x).clamp(0.0, 1.0);
+                let t3 = inverse_lerp(self.p1.y, dir.y, min.y).clamp(0.0, 1.0);
+                let t4 = inverse_lerp(self.p1.y, dir.y, max.y).clamp(0.0, 1.0);
+
+                Line {
+                    p1: (t1.min(t2).min(t3).min(t4) * dir + self.p1)
+                        .clamp_mut(&min, &max)
+                        .to_owned(),
+                    p2: (t1.max(t2).max(t3).max(t4) * dir + self.p1)
+                        .clamp_mut(&min, &max)
+                        .to_owned(),
+                }
+            }
+        };
+
+        if !line.p1.in_range(&min, &max) || !line.p2.in_range(&min, &max) {
+            None
+        } else {
+            Some(line)
+        }
+    }
+}

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+        window.onload = function() {
+            const appScript = document.createElement('script');
+            appScript.defer = true;
+            appScript.async = true;
+            appScript.src = "fast_blur_cpu.js";
+            document.head.appendChild(appScript);
+        };
+    </script>
+    <style>
+      .label-text {
+        display: inline-block;
+        vertical-align: middle;
+        width: 100px;
+      }
+
+      .control {
+        margin: 5px 0;
+      }
+
+      input[type="number"] {
+        width: 50px;
+      }
+
+      input[type="range"] {
+        width: 500px;
+      }
+
+      #report {
+        margin: 5px 0;
+        font-size: 110%;
+      }
+
+      #timetaken {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Fast Blur (using accumulated sums) - CPU</h1>
+
+    <div>
+      <img src="media/photo.png" alt="" id="image" />
+      <canvas id="game" width="512" height="512" style="border: 1px solid black;"></canvas>
+    </div>
+
+    <div class="control">
+      <label>
+        <span class="label-text">Method:</span>
+        <select id="method">
+          <option selected value="summed">Summed averages</option>
+          <option value="naive">Brute force (slow - use blur 8 or under)</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="control">
+      <label>
+        <span class="label-text">Blur:</span>
+        <input type="range" id="amount" min="0" max="1" value="0" step="0.01" />
+        <input type="number" id="amountvalue" value="0.0" />
+      </label>
+    </div>
+
+    <div class="control">
+      <div id="report">Time taken: <span id="timetaken"></span></div>
+    </div>
+  </body>
+</html>

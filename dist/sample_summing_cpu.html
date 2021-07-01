@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script>
+        window.onload = function() {
+            const appScript = document.createElement('script');
+            appScript.defer = true;
+            appScript.async = true;
+            appScript.src = "sample_summing_cpu.js";
+            document.head.appendChild(appScript);
+        };
+    </script>
+
+    <style>
+      .label-text {
+        display: inline-block;
+        vertical-align: middle;
+        width: 100px;
+      }
+
+      .control {
+        margin: 5px 0;
+      }
+
+      input[type="number"] {
+        width: 50px;
+      }
+
+      input[type="range"] {
+        width: 500px;
+      }
+
+      #image, #game {
+        border: 1px solid black;
+      }
+
+      #report {
+        margin: 5px 0;
+        font-size: 110%;
+      }
+
+      #timetaken {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Summed area tables - CPU</h2>
+
+    <p>The technique only works correctly with rectangular selections (2d scale, translations). Note: zooming in has the same cost as brute force, mostly due to the per-pixel cpu rendering. Supports floats!</p>
+
+    <div>
+      <img id="image" src="" alt="" />
+      <canvas id="game" width="512" height="512"></canvas>
+    </div>
+
+    <div class="control">
+      <label>
+        <span class="label-text">Image:</span>
+        <select id="chooseimage">
+          <option value="media/photo.png">Photo</option>
+          <option selected value="media/test.png">Lines</option>
+          <option value="media/sample.png">Pattern</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="control">
+      <label>
+        <span class="label-text">Method:</span>
+        <select id="method">
+          <option selected value="summed">Summed averages</option>
+          <option value="naive">Brute force (slow)</option>
+          <option value="none">None</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="control">
+      <label>
+        <span class="label-text">Scale:</span>
+        <input type="range" id="scale" min="0.01" max="1.99" value="1.0" step="0.01" list="scale_steplist" />
+        <datalist id="scale_steplist">
+          <option>0.01</option>
+          <option>0.5</option>
+          <option>1.0</option>
+          <option>1.5</option>
+          <option>1.99</option>
+        </datalist>
+        <input type="number" id="scalevalue" value="1.0" />
+      </label>
+    </div>
+    
+    <div class="control">
+      <label>
+        <span class="label-text">x offset:</span>
+        <input type="range" id="xoffset" min="-100" max="100" value="0.0" step="0.1" list="xoffset_steplist" />
+        <datalist id="xoffset_steplist">
+          <option>-50.0</option>
+          <option>-20.0</option>
+          <option>-10.0</option>
+          <option>0.0</option>
+          <option>10.0</option>
+          <option>20.0</option>
+          <option>50.0</option>
+        </datalist>
+        <input type="number" id="xoffsetvalue" value="0.0" />
+      </label>
+    </div>
+
+    <div class="control">
+      <label>
+        <span class="label-text">y offset:</span>
+        <input type="range" id="yoffset" min="-100" max="100" value="0.0" step="0.1" list="yoffset_steplist" />
+        <datalist id="yoffset_steplist">
+          <option>-50.0</option>
+          <option>-20.0</option>
+          <option>-10.0</option>
+          <option>0.0</option>
+          <option>10.0</option>
+          <option>20.0</option>
+          <option>50.0</option>
+        </datalist>
+        <input type="number" id="yoffsetvalue" value="0.0" />
+      </label>
+    </div>
+
+    <div class="control">
+      <div id="report">Time taken: <span id="timetaken"></span></div>
+    </div>
+  </body>
+</html>
