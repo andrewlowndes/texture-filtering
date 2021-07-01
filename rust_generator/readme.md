@@ -5,7 +5,7 @@ A port of the generator logic to produce a triangle coverage map for an image.
 Ensure Rust is installed. Enable nightly version via `rustup default nightly`.
 
 ## Running
-Run the examples via:
+Checkout the repository and change to this directory (`cd rust_generator`), then run the examples via:
 
 - Triangle map example: `cargo run --release --example=triangle_map`
 - Coverage example: `cargo run --release --example=coverage`

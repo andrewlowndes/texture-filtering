@@ -21,7 +21,7 @@ Looking up a triangles averaged colour
 Visit https://andrewlowndes.github.io/texture-filtering/dist/ to see a set of demos showing the various techniques used in this repo.
 
 ## Generator
-Read the [readme for the fast Rust generator](rust_generator/readme.md) to create cached triangle maps from custom textures.
+Read the [readme for the fast Rust generator](rust_generator/) to create cached triangle maps from custom textures.
 
 ## Run
 1. Ensure NodeJS installed
