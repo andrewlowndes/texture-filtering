@@ -20,9 +20,6 @@ Example:
 
 `cargo run --release --bin generate ../dist/media/photo.png 2 ../dist/media/cache/photo_2.png`
 
-## Benchmarking
-Run the benchmarks via `cargo bench` to get timings for generating maps at various resolutions (up to 8).
-
 ## Performance comparison
 The web-based version is currently single-threaded and the Rust version creates threads for every sample in the generated image. Timing based on running in Windows 10 on a Ryzen 7 2700X witih 32GB DDR4 RAM running at 1200MHz. 
 
