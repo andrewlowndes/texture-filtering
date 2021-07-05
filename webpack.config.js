@@ -11,7 +11,8 @@ module.exports = {
     'sample_summing_cpu': './src/demos/sampleSummingCpu.ts',
     'triangle_average_cpu': './src/demos/triangleAverageCpu.ts',
     'triangle_fitting_cpu': './src/demos/triangleFittingCpu.ts',
-    'generator': './src/demos/generator.ts'
+    'generator': './src/demos/generator.ts',
+    'fast_blur_webgl': './src/demos/fastBlurWebgl.ts'
   },
   output: {
     filename: '[name].js',

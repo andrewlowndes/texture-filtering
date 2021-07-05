@@ -39,7 +39,7 @@ Read the [readme for the fast Rust generator](rust_generator/) to create cached 
   - [x] CPU - Rust (Still slow for resolutions over 10)
   - [ ] WebGL
 - [ ] WebGL
-  - [ ] Fast blur
+  - [x] Fast blur
   - [ ] Approximated triangle fitting in 3D
 
 ## Usages

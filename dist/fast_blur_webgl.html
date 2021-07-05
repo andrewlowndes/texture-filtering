@@ -8,7 +8,7 @@
             const appScript = document.createElement('script');
             appScript.defer = true;
             appScript.async = true;
-            appScript.src = "fast_blur_cpu.js";
+            appScript.src = "fast_blur_webgl.js";
             document.head.appendChild(appScript);
         };
     </script>
@@ -22,7 +22,7 @@
       .control {
         margin: 5px 0;
       }
-      
+
       #image, 
       #game {
         border: 1px solid black;
@@ -47,7 +47,11 @@
     </style>
   </head>
   <body>
-    <h1>Fast Blur (using accumulated sums) - CPU</h1>
+    <h1>Fast Blur (using accumulated sums) - WebGL 2.0</h1>
+
+    <p>Same demo as the CPU except the summed texture is uploaded to the GPU and the lookup if performed in a fragment shader.</p>
+
+    <p>Note: needs WebGL 2.0 to use a single texture storing a 32-bit accumulated sum for each channel per pixel. A WebGL 1.0 version could be made with splitting the channels into separate textures and packing the sum into the rgba bytes.</p>
 
     <div>
       <img src="media/photo.png" alt="" id="image" />
@@ -56,17 +60,7 @@
 
     <div class="control">
       <label>
-        <span class="label-text">Method:</span>
-        <select id="method">
-          <option selected value="summed">Summed averages</option>
-          <option value="naive">Brute force (slow - use blur 8 or under)</option>
-        </select>
-      </label>
-    </div>
-
-    <div class="control">
-      <label>
-        <span class="label-text">Blur:</span>
+        <span class="label-text">Amount:</span>
         <input type="range" id="amount" min="0" max="1" value="0" step="0.01" />
         <input type="number" id="amountvalue" value="0.0" />
       </label>
