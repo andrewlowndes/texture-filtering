@@ -17,11 +17,23 @@ impl Default for Point {
 }
 
 impl Point {
+    pub fn new(x: f64, y: f64) -> Self {
+        Self { x, y }
+    }
+
     pub fn clamp(&self, min: &Self, max: &Self) -> Self {
         Self {
             x: self.x.min(max.x).max(min.x),
             y: self.y.min(max.y).max(min.y),
         }
+    }
+
+    pub fn smallest(&self) -> f64 {
+        self.x.min(self.y)
+    }
+
+    pub fn largest(&self) -> f64 {
+        self.x.max(self.y)
     }
 
     pub fn min(&self, b: &Self) -> Self {
@@ -82,13 +94,13 @@ impl Point {
         }
     }
 
-    pub fn rotate(&self, center: &Point, amount: f64) -> Self {
+    pub fn rotate(&self, center: &Self, amount: f64) -> Self {
         let dx = self.x - center.x;
         let dy = self.y - center.y;
         let cos_rotate = amount.cos();
         let sin_rotate = amount.sin();
 
-        Point {
+        Self {
             x: center.x + (dx * cos_rotate) - (dy * sin_rotate),
             y: center.y + (dx * sin_rotate) + (dy * cos_rotate),
         }
@@ -150,7 +162,7 @@ impl Point {
         self
     }
 
-    pub fn rotate_mut(&mut self, center: &Point, amount: f64) -> &mut Self {
+    pub fn rotate_mut(&mut self, center: &Self, amount: f64) -> &mut Self {
         let dx = self.x - center.x;
         let dy = self.y - center.y;
         let cos_rotate = amount.cos();

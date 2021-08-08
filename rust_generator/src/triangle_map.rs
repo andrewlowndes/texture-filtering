@@ -1,6 +1,11 @@
 use std::{sync::Arc, thread};
 
-use crate::{point::Point, slice2d::{Slice2d, rgb}, triangle::Triangle, triangle_coverage::triangle_coverage};
+use crate::{
+    point::Point,
+    slice2d::{rgb, Slice2d},
+    triangle::Triangle,
+    triangle_coverage::triangle_coverage,
+};
 
 pub fn create_triangle_map(img: Slice2d, resolution: usize) -> Slice2d {
     let texture_size = resolution.pow(3);
@@ -26,9 +31,18 @@ pub fn create_triangle_map(img: Slice2d, resolution: usize) -> Slice2d {
 
                             let handle = thread::spawn(move || {
                                 let mut triangle = Triangle::new(
-                                    Point { x: x1 as f64, y: y1 as f64 },
-                                    Point { x: x2 as f64, y: y2 as f64 },
-                                    Point { x: x3 as f64, y: y3 as f64 }
+                                    Point {
+                                        x: x1 as f64,
+                                        y: y1 as f64,
+                                    },
+                                    Point {
+                                        x: x2 as f64,
+                                        y: y2 as f64,
+                                    },
+                                    Point {
+                                        x: x3 as f64,
+                                        y: y3 as f64,
+                                    },
                                 );
 
                                 triangle.calculate_directions();
@@ -48,6 +62,9 @@ pub fn create_triangle_map(img: Slice2d, resolution: usize) -> Slice2d {
     Slice2d {
         width: texture_size,
         height: texture_size,
-        data: handles.into_iter().map(|item| item.join().unwrap()).collect::<Vec<_>>()
+        data: handles
+            .into_iter()
+            .map(|item| item.join().unwrap())
+            .collect::<Vec<_>>(),
     }
 }

@@ -1,7 +1,8 @@
 use std::f64::EPSILON;
 
-use crate::{maths::inverse_lerp, point::Point};
+use crate::{line_equation::LineEquation, maths::inverse_lerp, point::Point};
 
+#[derive(Debug)]
 pub struct Line {
     pub p1: Point,
     pub p2: Point,
@@ -14,6 +15,40 @@ impl Line {
 
     pub fn dir(&self) -> Point {
         self.p2 - self.p1
+    }
+
+    pub fn equation(&self) -> LineEquation {
+        let direction = self.dir();
+
+        let gradient = direction.y / direction.x;
+        let intersect = self.p1.y - self.p1.x * gradient;
+
+        LineEquation {
+            gradient,
+            intersect,
+        }
+    }
+
+    pub fn x(&self) -> Point {
+        Point {
+            x: self.p1.x,
+            y: self.p2.x,
+        }
+    }
+
+    pub fn y(&self) -> Point {
+        Point {
+            x: self.p1.y,
+            y: self.p2.y,
+        }
+    }
+
+    pub fn min(&self) -> Point {
+        self.p1.min(&self.p2)
+    }
+
+    pub fn max(&self) -> Point {
+        self.p1.max(&self.p2)
     }
 
     pub fn clip_rectangle(&self, min: Point, max: Point) -> Option<Line> {

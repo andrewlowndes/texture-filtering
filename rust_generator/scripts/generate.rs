@@ -1,6 +1,6 @@
-use std::env::args;
 use generator::{image::load_image, slice2d::from_u32, triangle_map::create_triangle_map};
 use image::{Rgb, RgbImage};
+use std::{env::args, time::Instant};
 
 fn main() {
     if args().len() < 2 {
@@ -10,12 +10,21 @@ fn main() {
 
     //allow a image path to be given, a resolution and output directory
     let input_path = args().nth(1).expect("no image path given");
-    let resolution = args().nth(2).expect("no resolution given").parse::<usize>().expect("resolution must be a positive number");
+    let resolution = args()
+        .nth(2)
+        .expect("no resolution given")
+        .parse::<usize>()
+        .expect("resolution must be a positive number");
     let output_path = args().nth(3).expect("no resolution given");
 
     //generate a triangle map from the inputs
     let img = load_image(&input_path).expect("Could not load image :(");
+
+    println!("Generating...");
+    let start = Instant::now();
     let cache = create_triangle_map(img, resolution);
+    let time_taken = start.elapsed().as_millis();
+    println!("Time taken: {:?}ms", time_taken);
 
     let mut cache_img = RgbImage::new(cache.width as u32, cache.height as u32);
 
@@ -26,5 +35,9 @@ fn main() {
         }
     }
 
-    cache_img.save(&output_path).expect("could not save image to output path specified");
+    cache_img
+        .save(&output_path)
+        .expect("could not save image to output path specified");
+    
+    println!("Saved image :)");
 }

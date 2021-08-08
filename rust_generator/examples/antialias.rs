@@ -2,7 +2,6 @@ use minifb::{Key, MouseMode, Window, WindowOptions};
 use std::time::Duration;
 
 use generator::{
-    dda::DdaOptions,
     image::load_image,
     point::Point,
     rasterise::rasterise,
@@ -37,8 +36,6 @@ fn main() {
     .expect("No window");
     window.limit_update_rate(Some(Duration::from_micros(16600)));
 
-    let dda_options = DdaOptions::default();
-
     let mut center = triangle.center();
 
     let rotate_amount = 0.01;
@@ -49,14 +46,20 @@ fn main() {
 
         let triangle_size = triangle.max() - triangle.min();
 
-        window.get_mouse_pos(MouseMode::Discard).map(|(x, y)| {
-            //make sure the triangle does not go out the bounds by only setting if the 
+        if let Some((x, y)) = window.get_mouse_pos(MouseMode::Discard) {
+            //make sure the triangle does not go out the bounds by only setting if the
             let mouse_x = x as f64;
             let mouse_y = y as f64;
-            
-            if mouse_x > triangle_size.x && mouse_x < buffer.width as f64 - triangle_size.x
-            && mouse_y > triangle_size.y && mouse_y < buffer.height as f64 - triangle_size.y {
-                let new_center = Point { x: mouse_x, y: mouse_y };
+
+            if mouse_x > triangle_size.x
+                && mouse_x < buffer.width as f64 - triangle_size.x
+                && mouse_y > triangle_size.y
+                && mouse_y < buffer.height as f64 - triangle_size.y
+            {
+                let new_center = Point {
+                    x: mouse_x,
+                    y: mouse_y,
+                };
 
                 triangle.p1 = triangle.p1 - center + new_center;
                 triangle.p2 = triangle.p2 - center + new_center;
@@ -65,7 +68,7 @@ fn main() {
                 center.x = mouse_x;
                 center.y = mouse_y;
             }
-        });
+        }
 
         //rotate all of the triangles vertices so we can test the algorithm fully
         triangle.p1.rotate_mut(&center, rotate_amount);
@@ -73,9 +76,9 @@ fn main() {
         triangle.p3.rotate_mut(&center, rotate_amount);
         triangle.calculate_directions();
 
-        rasterise(&triangle, &dda_options, |min_x, max_x, y, is_inside| {
+        rasterise(&triangle, |min_x, max_x, y, is_inside| {
             if is_inside {
-                let width = max_x - min_x;
+                let width = max_x + 1 - min_x;
                 let buffer_index = buffer.index(min_x, y);
                 let img_index = img.index(min_x, y);
 

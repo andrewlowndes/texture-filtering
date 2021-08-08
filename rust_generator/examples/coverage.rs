@@ -1,7 +1,14 @@
 use minifb::{Key, Window, WindowOptions};
 use std::time::Duration;
 
-use generator::{dda::DdaOptions, image::load_image, point::Point, rasterise::rasterise, slice2d::{Slice2d, rgb}, triangle::Triangle, triangle_coverage::triangle_coverage};
+use generator::{
+    image::load_image,
+    point::Point,
+    rasterise::rasterise,
+    slice2d::{rgb, Slice2d},
+    triangle::Triangle,
+    triangle_coverage::triangle_coverage,
+};
 
 fn main() {
     const WIDTH: usize = 512;
@@ -59,25 +66,25 @@ fn main() {
         Triangle::new(
             Point { x: 510.0, y: 510.0 },
             Point { x: 510.0, y: 255.0 },
-            Point { x: 510.0, y: 0.0 }
+            Point { x: 510.0, y: 0.0 },
         ),
         Triangle::new(
             Point { x: 2.0, y: 0.0 },
             Point { x: 2.0, y: 255.0 },
-            Point { x: 2.0, y: 510.0 }
+            Point { x: 2.0, y: 510.0 },
         ),
         Triangle::new(
             Point { x: 0.0, y: 510.0 },
             Point { x: 255.0, y: 510.0 },
-            Point { x: 510.0, y: 510.0 }
+            Point { x: 510.0, y: 510.0 },
         ),
         Triangle::new(
             Point { x: 0.0, y: 2.0 },
             Point { x: 255.0, y: 2.0 },
-            Point { x: 510.0, y: 2.0 }
-        )
+            Point { x: 510.0, y: 2.0 },
+        ),
     ];
-    
+
     let mut window = Window::new(
         "Coverage example - ESC to exit",
         WIDTH,
@@ -87,8 +94,6 @@ fn main() {
     .expect("No window");
     window.limit_update_rate(Some(Duration::from_micros(16600)));
 
-    let dda_options = DdaOptions::default();
-
     while window.is_open() && !window.is_key_down(Key::Escape) {
         //clear
         buffer.data.fill(0);
@@ -97,10 +102,11 @@ fn main() {
         buffer.image(&img, 0, 0);
 
         for triangle in &triangles {
-            let triangle_rgb = triangle_coverage(&img, &triangle);
+            let triangle_rgb = triangle_coverage(&img, triangle);
             let triangle_col = rgb(triangle_rgb.0, triangle_rgb.1, triangle_rgb.2);
-            rasterise(&triangle, &dda_options, |min_x, max_x, y, _is_inside| {
-                buffer.rectangle(min_x as i32, y as i32, max_x - min_x + 1, 1, triangle_col);
+
+            rasterise(triangle, |min_x, max_x, y, _is_inside| {
+                buffer.rectangle(min_x as i32, y as i32, max_x + 1 - min_x, 1, triangle_col);
             });
         }
 

@@ -2,21 +2,21 @@ use std::f64::EPSILON;
 
 use crate::{maths::neg_fract, point::Point};
 
-pub struct DdaOptions {
+pub struct TraverseOptions {
     pub pos: Point,
     pub cell_size: Point,
 }
 
-impl Default for DdaOptions {
+impl Default for TraverseOptions {
     fn default() -> Self {
         Self {
             pos: Point { x: 0.0, y: 0.0 },
-            cell_size: Point { x: 1.0, y: 1.0 }
+            cell_size: Point { x: 1.0, y: 1.0 },
         }
     }
 }
 
-pub struct DdaResult {
+pub struct TraverseResult {
     cell: Point,
     step: Point,
     t_max: Point,
@@ -24,7 +24,7 @@ pub struct DdaResult {
     done: bool,
 }
 
-impl Iterator for DdaResult {
+impl Iterator for TraverseResult {
     type Item = Point;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -51,7 +51,11 @@ impl Iterator for DdaResult {
     }
 }
 
-pub fn dda(from: &Point, to: &Point, options: &DdaOptions) -> Box<dyn Iterator<Item = Point>> {
+pub fn traverse(
+    from: &Point,
+    to: &Point,
+    options: &TraverseOptions,
+) -> Box<dyn Iterator<Item = Point>> {
     let pos = from - options.pos;
     let dir = to - from;
     let cell = (pos / options.cell_size).floor();
@@ -95,7 +99,7 @@ pub fn dda(from: &Point, to: &Point, options: &DdaOptions) -> Box<dyn Iterator<I
         },
     };
 
-    Box::new(DdaResult {
+    Box::new(TraverseResult {
         cell,
         step,
         t_max,

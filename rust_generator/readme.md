@@ -9,7 +9,8 @@ Checkout the repository and change to this directory (`cd rust_generator`), then
 
 - Triangle map example: `cargo run --release --example=triangle_map`
 - Coverage example: `cargo run --release --example=coverage`
-- Dda example: `cargo run --release --example=dda`
+- Traverse example: `cargo run --release --example=traverse`
+- Rasterise example: `cargo run --release --example=rasterise`
 - Antialias example: `cargo run --release --example=antialias`
 
 Generate a map directly from a given image and store as a png back to the filesystem via:
@@ -34,5 +35,7 @@ The web-based version is currently single-threaded and the Rust version creates 
 | 8 | - | ~20s | 512 x 512 |
 | 9 | - | ~40s | 729 x 729 |
 | 10 | - | ~100s | 1000 x 1000 |
+| 11 | - | ~192s | 1331 x 1331 |
+| 12 | - | ~345s | 1729 x 1728 |
 
-The performance of the Rust app is not quick enough for large cache sizes (target of 16), need to opt for a GPU-based solution.
+The performance of the Rust app is not quick enough for large resolutions (target of 16), need to opt for a GPU-based solution.

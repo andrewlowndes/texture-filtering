@@ -1,108 +1,105 @@
-use crate::{
-    dda::{dda, DdaOptions},
-    triangle::Triangle,
-};
+use crate::{line_equation::LineEquation, triangle::Triangle};
+use itertools::Itertools;
 
-#[derive(Clone, Debug, PartialEq)]
-pub struct LineEntry {
-    min: usize,
-    max: usize,
+#[derive(Debug)]
+struct LineRange {
+    min_y: f64,
+    max_y: f64,
+    start_x: f64,
+    end_x: f64,
+    min_x: f64,
+    max_x: f64,
+    equation: LineEquation,
 }
 
-pub type Scanline = [Option<LineEntry>; 3];
-
 //when rasterising each vertical scanline for the triangle is traversed and inclusive ranges are passed to the callbacks
-//note: can convert to a generator instead and store the inside/outside on the return object
 //callback properties: min x, max x, y, is_inside
-pub fn rasterise<F: FnMut(usize, usize, usize, bool)>(
-    triangle: &Triangle,
-    options: &DdaOptions,
-    mut callback: F,
-) {
+pub fn rasterise<F: FnMut(usize, usize, usize, bool)>(triangle: &Triangle, mut callback: F) {
     let min = triangle.min();
     let max = triangle.max();
+    let lines = triangle.lines();
 
-    if max.y < min.y {
+    let line_ranges: Vec<_> = lines
+        .iter()
+        .map(|line| {
+            let (p_start, p_end) = {
+                if line.p1.y < line.p2.y {
+                    (line.p1, line.p2)
+                } else if line.p1.y > line.p2.y {
+                    (line.p2, line.p1)
+                } else if line.p1.x < line.p2.x {
+                    (line.p1, line.p2)
+                } else {
+                    (line.p2, line.p1)
+                }
+            };
+
+            let x_values = line.x();
+
+            LineRange {
+                min_y: p_start.y,
+                max_y: p_end.y,
+                start_x: p_start.x,
+                end_x: p_end.x,
+                min_x: x_values.smallest(),
+                max_x: x_values.largest(),
+                equation: line.equation(),
+            }
+        })
+        .collect();
+    
+    if max.y - min.y < 1.0 {
+        callback(min.x.floor() as usize, max.x.floor() as usize, min.y.floor() as usize, false);
         return;
     }
 
-    let num_scanlines = (max.y.floor() - min.y.floor() + 1.0) as usize;
-
-    //each scanline can have all 3 lines cross it so we need to store ranges for each one
-    let mut scanlines: Vec<Scanline> = vec![[None, None, None]; num_scanlines];
-
-    let lines = [
-        (&triangle.p1, &triangle.p2),
-        (&triangle.p2, &triangle.p3),
-        (&triangle.p3, &triangle.p1),
-    ];
-
-    let y_start = min.y.floor() as usize;
-
-    //store the min and max x positions for all of the lines for each y coord
-    lines.iter().enumerate().for_each(|(index, (p1, p2))| {
-        for point in dda(p1, p2, options) {
-            let scanline_index = (point.y - y_start as f64).floor() as usize;
-            let scanline = scanlines.get_mut(scanline_index).unwrap_or_else(|| {
-                dbg!(&lines, num_scanlines, scanline_index, point);
-                panic!("Scanline index out of bounds");
-            });
-
-            let x = point.x.floor() as usize;
-
-            if let Some(entry) = scanline.get_mut(index).unwrap() {
-                entry.min = entry.min.min(x);
-                entry.max = entry.max.max(x);
-            } else {
-                scanline[index] = Some(LineEntry { min: x, max: x });
-            }
-        }
-    });
-
-    //now we can just iterate through the scanlines and determine what is outside boundary and what is inside
-    scanlines
-        .into_iter()
-        .enumerate()
-        .for_each(|(index, scanline)| {
-            let mut lines = scanline
+    ((min.y.floor() as usize)..=(max.y.ceil() as usize))
+        .tuple_windows()
+        .for_each(|(prev_y, y)| {
+            let scanline_ranges = line_ranges
                 .iter()
-                .filter(|item| item.is_some())
-                .map(|item| item.as_ref().unwrap())
+                .filter(|line_range| {
+                    line_range.max_y >= prev_y as f64 && line_range.min_y < y as f64
+                })
+                .map(|line| {
+                    //could pre-compute these to avoid duplicate intersection tests but simpler this way
+                    let from_x = line
+                        .equation
+                        .solve_x(prev_y as f64)
+                        .map_or(line.start_x, |item| item.clamp(line.min_x, line.max_x));
+
+                    let to_x = line
+                        .equation
+                        .solve_x(y as f64)
+                        .map_or(line.end_x, |item| item.clamp(line.min_x, line.max_x));
+
+                    (from_x.min(to_x), from_x.max(to_x))
+                })
+                .sorted_by(|a, b| {
+                    a.0.partial_cmp(&b.0)
+                        .unwrap()
+                        .then(a.1.partial_cmp(&b.1).unwrap())
+                })
                 .collect::<Vec<_>>();
 
-            lines.sort_by(|a, b| a.min.cmp(&b.min).then_with(|| a.max.cmp(&b.max)));
+            //up to 3 entries per scanline, determining an inside range
+            let inside_range_search = scanline_ranges
+                .windows(2)
+                .find(|pair| pair[1].0 - pair[0].1 > 1.0);
 
-            lines.dedup_by(|a, b| (a.min >= b.min && a.max <= b.max));
+            let start_x = scanline_ranges.first().unwrap().0.floor() as usize;
+            let end_x = scanline_ranges.last().unwrap().1.floor() as usize;
 
-            let y = y_start + index;
+            if let Some(inside_range) = inside_range_search {
+                let inside_start_x = (inside_range[0].1.floor() + 1.0) as usize;
+                let inside_end_x = (inside_range[1].0.floor() - 1.0) as usize;
 
-            match lines.len() {
-                1 => {
-                    let line = &lines[0];
-                    callback(line.min, line.max, y, false);
-                }
-                2 => {
-                    let line1 = &lines[0];
-                    let line2 = &lines[1];
-
-                    if line2.min <= (line1.max + 1) {
-                        callback(line1.min, line2.max, y, false);
-                    } else {
-                        callback(line1.min, line1.max, y, false);
-                        callback(line1.max + 1, line2.min - 1, y, true);
-                        callback(line2.min, line2.max, y, false);
-                    }
-                }
-                3 => {
-                    let min = lines[0].min;
-                    let max = lines[2].max;
-
-                    callback(min, max, y, false);
-                }
-                0 => {}
-                _ => {
-                    panic!("Too many lines!")
-                }
+                callback(start_x, inside_start_x - 1, prev_y, false);
+                callback(inside_start_x, inside_end_x, prev_y, true);
+                callback(inside_end_x + 1, end_x, prev_y, false);
+            } else {
+                //single entry per scanline with the full range of our triangle
+                callback(start_x, end_x, prev_y, false);
             }
         });
 }

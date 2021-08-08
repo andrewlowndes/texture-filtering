@@ -1,4 +1,4 @@
-use crate::{maths::inverse_lerp, point::Point, polygon::Polygon};
+use crate::{line::Line, maths::inverse_lerp, point::Point, polygon::Polygon};
 
 #[derive(Debug)]
 pub struct Triangle {
@@ -27,6 +27,23 @@ impl Triangle {
         triangle
     }
 
+    pub fn lines(&self) -> [Line; 3] {
+        [
+            Line {
+                p1: self.p1,
+                p2: self.p2,
+            },
+            Line {
+                p1: self.p2,
+                p2: self.p3,
+            },
+            Line {
+                p1: self.p3,
+                p2: self.p1,
+            },
+        ]
+    }
+
     //call when manually updating triangle points to re-compute cached properties
     pub fn calculate_directions(&mut self) {
         self.dir1 = self.p2 - self.p1;
@@ -47,11 +64,15 @@ impl Triangle {
     }
 
     pub fn area(&self) -> f64 {
-        Polygon::area(&Polygon { points: vec![self.p1, self.p2, self.p3] })
+        Polygon::area(&Polygon {
+            points: vec![self.p1, self.p2, self.p3],
+        })
     }
 
     pub fn area_signed(&self) -> f64 {
-        Polygon::area_signed(&Polygon { points: vec![self.p1, self.p2, self.p3] })
+        Polygon::area_signed(&Polygon {
+            points: vec![self.p1, self.p2, self.p3],
+        })
     }
 
     pub fn intersect_square(&self, min: Point, max: Point) -> Polygon {

@@ -3,7 +3,7 @@ use std::time::{Duration, Instant};
 
 use generator::{image::load_image, slice2d::Slice2d, triangle_map::create_triangle_map};
 
-const RESOLUTION: usize = 3;
+const RESOLUTION: usize = 11;
 
 fn main() {
     let img = load_image("../dist/media/photo.png").expect("Could not load image :(");
@@ -16,7 +16,7 @@ fn main() {
     println!("Time taken: {:?}ms", time_taken);
 
     let mut buffer = Slice2d {
-        data: vec![0; cache.width * cache.height ],
+        data: vec![0; cache.width * cache.height],
         width: cache.width,
         height: cache.height,
     };
