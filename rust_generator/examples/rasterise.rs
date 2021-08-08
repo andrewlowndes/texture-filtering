@@ -2,7 +2,7 @@ use minifb::{Key, Window, WindowOptions};
 use std::{time::Duration, usize};
 
 use generator::{
-    point::Point,
+    vec2::Vec2,
     rasterise::rasterise,
     slice2d::{rgb, Slice2d},
     traverse::{traverse, TraverseOptions},
@@ -19,9 +19,9 @@ fn main() {
         height: HEIGHT,
     };
 
-    let p1 = Point { x: 10.2, y: 10.8 };
-    let p2 = Point { x: 20.5, y: 20.4 };
-    let p3 = Point { x: 20.5, y: 10.4 };
+    let p1 = Vec2 { x: 10.2, y: 10.8 };
+    let p2 = Vec2 { x: 20.5, y: 20.4 };
+    let p3 = Vec2 { x: 20.5, y: 10.4 };
 
     let mut triangle = Triangle::new(p1, p2, p3);
 
@@ -41,8 +41,8 @@ fn main() {
     let zoom = 20;
 
     let traverse_options = TraverseOptions {
-        pos: Point { x: 0.0, y: 0.0 },
-        cell_size: Point {
+        pos: Vec2 { x: 0.0, y: 0.0 },
+        cell_size: Vec2 {
             x: zoom as f64,
             y: zoom as f64,
         },

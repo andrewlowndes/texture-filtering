@@ -1,4 +1,4 @@
-use crate::{bresenham::line, line::Line, point::Point};
+use crate::{bresenham::line, line::Line, vec2::Vec2};
 
 /**
  * A wrapper around a buffer with specific sizes and methods for operating on the buffer
@@ -28,19 +28,19 @@ impl Slice2d {
 
     pub fn line(&mut self, x: usize, y: usize, x2: usize, y2: usize, col: u32) {
         let full_line = Line {
-            p1: Point {
+            p1: Vec2 {
                 x: x as f64,
                 y: y as f64,
             },
-            p2: Point {
+            p2: Vec2 {
                 x: x2 as f64,
                 y: y2 as f64,
             },
         };
 
         if let Some(clipped_line) = full_line.clip_rectangle(
-            Point { x: 0.0, y: 0.0 },
-            Point {
+            Vec2 { x: 0.0, y: 0.0 },
+            Vec2 {
                 x: self.width as f64 - 1.0,
                 y: self.height as f64 - 1.0,
             },

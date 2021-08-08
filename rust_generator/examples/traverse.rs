@@ -2,7 +2,7 @@ use minifb::{Key, Window, WindowOptions};
 use std::{time::Duration, usize};
 
 use generator::{
-    point::Point,
+    vec2::Vec2,
     slice2d::{rgb, Slice2d},
     traverse::{traverse, TraverseOptions},
 };
@@ -17,8 +17,8 @@ fn main() {
         height: HEIGHT,
     };
 
-    let mut p1 = Point { x: 10.2, y: 10.8 };
-    let mut p2 = Point { x: 20.5, y: 20.4 };
+    let mut p1 = Vec2 { x: 10.2, y: 10.8 };
+    let mut p2 = Vec2 { x: 20.5, y: 20.4 };
 
     let mut window = Window::new(
         "Traverse demo - ESC to exit",
@@ -36,8 +36,8 @@ fn main() {
     let zoom = 20.0;
 
     let traverse_options = TraverseOptions {
-        pos: Point { x: 100.0, y: 10.0 },
-        cell_size: Point { x: zoom, y: zoom },
+        pos: Vec2 { x: 100.0, y: 10.0 },
+        cell_size: Vec2 { x: zoom, y: zoom },
     };
 
     let red = rgb(255, 0, 0);

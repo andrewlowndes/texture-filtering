@@ -1,25 +1,25 @@
-use crate::{line::Line, maths::inverse_lerp, point::Point, polygon::Polygon};
+use crate::{line::Line, maths::inverse_lerp, vec2::Vec2, polygon::Polygon};
 
 #[derive(Debug)]
 pub struct Triangle {
-    pub p1: Point,
-    pub p2: Point,
-    pub p3: Point,
+    pub p1: Vec2,
+    pub p2: Vec2,
+    pub p3: Vec2,
 
-    dir1: Point,
-    dir2: Point,
-    dir3: Point,
+    dir1: Vec2,
+    dir2: Vec2,
+    dir3: Vec2,
 }
 
 impl Triangle {
-    pub fn new(p1: Point, p2: Point, p3: Point) -> Triangle {
+    pub fn new(p1: Vec2, p2: Vec2, p3: Vec2) -> Triangle {
         let mut triangle = Triangle {
             p1,
             p2,
             p3,
-            dir1: Point::default(),
-            dir2: Point::default(),
-            dir3: Point::default(),
+            dir1: Vec2::default(),
+            dir2: Vec2::default(),
+            dir3: Vec2::default(),
         };
 
         triangle.calculate_directions();
@@ -51,15 +51,15 @@ impl Triangle {
         self.dir3 = self.p1 - self.p3;
     }
 
-    pub fn center(&self) -> Point {
+    pub fn center(&self) -> Vec2 {
         (self.p1 + self.p2 + self.p3) / 3.0
     }
 
-    pub fn min(&self) -> Point {
+    pub fn min(&self) -> Vec2 {
         self.p1.min(&self.p2).min(&self.p3)
     }
 
-    pub fn max(&self) -> Point {
+    pub fn max(&self) -> Vec2 {
         self.p1.max(&self.p2).max(&self.p3)
     }
 
@@ -75,7 +75,7 @@ impl Triangle {
         })
     }
 
-    pub fn intersect_square(&self, min: Point, max: Point) -> Polygon {
+    pub fn intersect_square(&self, min: Vec2, max: Vec2) -> Polygon {
         let mut points = Vec::with_capacity(12);
 
         let mut line1_points = vec![

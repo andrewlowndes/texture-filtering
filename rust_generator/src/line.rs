@@ -1,11 +1,11 @@
 use std::f64::EPSILON;
 
-use crate::{line_equation::LineEquation, maths::inverse_lerp, point::Point};
+use crate::{line_equation::LineEquation, maths::inverse_lerp, vec2::Vec2};
 
 #[derive(Debug)]
 pub struct Line {
-    pub p1: Point,
-    pub p2: Point,
+    pub p1: Vec2,
+    pub p2: Vec2,
 }
 
 impl Line {
@@ -13,7 +13,7 @@ impl Line {
         self.dir().length()
     }
 
-    pub fn dir(&self) -> Point {
+    pub fn dir(&self) -> Vec2 {
         self.p2 - self.p1
     }
 
@@ -29,38 +29,38 @@ impl Line {
         }
     }
 
-    pub fn x(&self) -> Point {
-        Point {
+    pub fn x(&self) -> Vec2 {
+        Vec2 {
             x: self.p1.x,
             y: self.p2.x,
         }
     }
 
-    pub fn y(&self) -> Point {
-        Point {
+    pub fn y(&self) -> Vec2 {
+        Vec2 {
             x: self.p1.y,
             y: self.p2.y,
         }
     }
 
-    pub fn min(&self) -> Point {
+    pub fn min(&self) -> Vec2 {
         self.p1.min(&self.p2)
     }
 
-    pub fn max(&self) -> Point {
+    pub fn max(&self) -> Vec2 {
         self.p1.max(&self.p2)
     }
 
-    pub fn clip_rectangle(&self, min: Point, max: Point) -> Option<Line> {
+    pub fn clip_rectangle(&self, min: Vec2, max: Vec2) -> Option<Line> {
         let line = {
             // vertical - just crop the y
             if (self.p1.x - self.p2.x).abs() < EPSILON {
                 Line {
-                    p1: Point {
+                    p1: Vec2 {
                         x: self.p1.x,
                         y: self.p1.y.clamp(min.y, max.y),
                     },
-                    p2: Point {
+                    p2: Vec2 {
                         x: self.p2.x,
                         y: self.p2.y.clamp(min.y, max.y),
                     },
@@ -68,11 +68,11 @@ impl Line {
             } else if (self.p1.y - self.p2.y).abs() < EPSILON {
                 // horizontal - just crop the x
                 Line {
-                    p1: Point {
+                    p1: Vec2 {
                         x: self.p1.x.clamp(min.x, max.x),
                         y: self.p1.y,
                     },
-                    p2: Point {
+                    p2: Vec2 {
                         x: self.p2.x.clamp(min.x, max.x),
                         y: self.p2.y,
                     },

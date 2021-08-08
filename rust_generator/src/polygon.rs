@@ -1,10 +1,10 @@
-use crate::point::Point;
+use crate::vec2::Vec2;
 
 use itertools::Itertools;
 
 #[derive(Clone, Debug)]
 pub struct Polygon {
-    pub points: Vec<Point>,
+    pub points: Vec<Vec2>,
 }
 
 impl Polygon {

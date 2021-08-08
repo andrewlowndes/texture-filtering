@@ -1,7 +1,7 @@
 use std::f64::EPSILON;
 
 use crate::{
-    point::Point,
+    vec2::Vec2,
     rasterise::rasterise,
     slice2d::{from_u32, Slice2d},
     triangle::Triangle,
@@ -54,11 +54,11 @@ pub fn triangle_coverage(image_buffer: &Slice2d, triangle: &Triangle) -> (u8, u8
             for x in min_x..=max_x {
                 //as a test, determine the coverage of the triangle in outside cells and use as antialiasing
                 let polygon = triangle.intersect_square(
-                    Point {
+                    Vec2 {
                         x: x as f64,
                         y: y as f64,
                     },
-                    Point {
+                    Vec2 {
                         x: x as f64 + 1.0,
                         y: y_max,
                     },

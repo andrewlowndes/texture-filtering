@@ -1,31 +1,31 @@
 use std::f64::EPSILON;
 
-use crate::{maths::neg_fract, point::Point};
+use crate::{maths::neg_fract, vec2::Vec2};
 
 pub struct TraverseOptions {
-    pub pos: Point,
-    pub cell_size: Point,
+    pub pos: Vec2,
+    pub cell_size: Vec2,
 }
 
 impl Default for TraverseOptions {
     fn default() -> Self {
         Self {
-            pos: Point { x: 0.0, y: 0.0 },
-            cell_size: Point { x: 1.0, y: 1.0 },
+            pos: Vec2 { x: 0.0, y: 0.0 },
+            cell_size: Vec2 { x: 1.0, y: 1.0 },
         }
     }
 }
 
 pub struct TraverseResult {
-    cell: Point,
-    step: Point,
-    t_max: Point,
-    t_delta: Point,
+    cell: Vec2,
+    step: Vec2,
+    t_max: Vec2,
+    t_delta: Vec2,
     done: bool,
 }
 
 impl Iterator for TraverseResult {
-    type Item = Point;
+    type Item = Vec2;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.done {
@@ -52,10 +52,10 @@ impl Iterator for TraverseResult {
 }
 
 pub fn traverse(
-    from: &Point,
-    to: &Point,
+    from: &Vec2,
+    to: &Vec2,
     options: &TraverseOptions,
-) -> Box<dyn Iterator<Item = Point>> {
+) -> Box<dyn Iterator<Item = Vec2>> {
     let pos = from - options.pos;
     let dir = to - from;
     let cell = (pos / options.cell_size).floor();
@@ -63,7 +63,7 @@ pub fn traverse(
 
     if dir.y.abs() < EPSILON {
         let range = (cell.x.min(stop_cell.x) as usize)..=(cell.x.max(stop_cell.x) as usize);
-        return Box::new(range.map(move |x| Point {
+        return Box::new(range.map(move |x| Vec2 {
             x: x as f64,
             y: cell.y,
         }));
@@ -71,7 +71,7 @@ pub fn traverse(
 
     if dir.x.abs() < EPSILON {
         let range = (cell.y.min(stop_cell.y) as usize)..=(cell.y.max(stop_cell.y) as usize);
-        return Box::new(range.map(move |y| Point {
+        return Box::new(range.map(move |y| Vec2 {
             x: cell.x,
             y: y as f64,
         }));
@@ -82,7 +82,7 @@ pub fn traverse(
     let t_delta = (step / dir) * options.cell_size;
     let t_pos = pos / options.cell_size;
 
-    let t_max = Point {
+    let t_max = Vec2 {
         x: {
             if step.x > 0.0 {
                 t_delta.x * neg_fract(t_pos.x)

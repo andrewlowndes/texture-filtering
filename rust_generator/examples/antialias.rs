@@ -3,7 +3,7 @@ use std::time::Duration;
 
 use generator::{
     image::load_image,
-    point::Point,
+    vec2::Vec2,
     rasterise::rasterise,
     slice2d::{from_u32, rgb, Slice2d},
     triangle::Triangle,
@@ -22,9 +22,9 @@ fn main() {
     };
 
     let mut triangle = Triangle::new(
-        Point { x: 120.0, y: 120.0 },
-        Point { x: 200.0, y: 150.0 },
-        Point { x: 150.0, y: 200.0 },
+        Vec2 { x: 120.0, y: 120.0 },
+        Vec2 { x: 200.0, y: 150.0 },
+        Vec2 { x: 150.0, y: 200.0 },
     );
 
     let mut window = Window::new(
@@ -56,7 +56,7 @@ fn main() {
                 && mouse_y > triangle_size.y
                 && mouse_y < buffer.height as f64 - triangle_size.y
             {
-                let new_center = Point {
+                let new_center = Vec2 {
                     x: mouse_x,
                     y: mouse_y,
                 };
@@ -89,11 +89,11 @@ fn main() {
                 for x in min_x..=max_x {
                     //as a test, determine the coverage of the triangle in outside cells and use as antialiasing
                     let polygon = triangle.intersect_square(
-                        Point {
+                        Vec2 {
                             x: x as f64,
                             y: y as f64,
                         },
-                        Point {
+                        Vec2 {
                             x: x as f64 + 1.0,
                             y: y as f64 + 1.0,
                         },

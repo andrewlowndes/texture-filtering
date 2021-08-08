@@ -1,7 +1,7 @@
 use std::{sync::Arc, thread};
 
 use crate::{
-    point::Point,
+    vec2::Vec2,
     slice2d::{rgb, Slice2d},
     triangle::Triangle,
     triangle_coverage::triangle_coverage,
@@ -31,15 +31,15 @@ pub fn create_triangle_map(img: Slice2d, resolution: usize) -> Slice2d {
 
                             let handle = thread::spawn(move || {
                                 let mut triangle = Triangle::new(
-                                    Point {
+                                    Vec2 {
                                         x: x1 as f64,
                                         y: y1 as f64,
                                     },
-                                    Point {
+                                    Vec2 {
                                         x: x2 as f64,
                                         y: y2 as f64,
                                     },
-                                    Point {
+                                    Vec2 {
                                         x: x3 as f64,
                                         y: y3 as f64,
                                     },

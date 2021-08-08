@@ -5,18 +5,18 @@ use auto_ops::{impl_op_ex, impl_op_ex_commutative};
 use crate::maths::{lerp, sign};
 
 #[derive(Copy, Clone, Debug)]
-pub struct Point {
+pub struct Vec2 {
     pub x: f64,
     pub y: f64,
 }
 
-impl Default for Point {
+impl Default for Vec2 {
     fn default() -> Self {
         Self { x: 0.0, y: 0.0 }
     }
 }
 
-impl Point {
+impl Vec2 {
     pub fn new(x: f64, y: f64) -> Self {
         Self { x, y }
     }
@@ -190,105 +190,105 @@ impl Point {
     }
 }
 
-impl PartialEq<Self> for Point {
+impl PartialEq<Self> for Vec2 {
     fn eq(&self, other: &Self) -> bool {
         //since we are dealing with floats here we should allow for rounding error
         (self.x - other.x).abs() < EPSILON && (self.y - other.y).abs() < EPSILON
     }
 }
 
-impl_op_ex!(+ |a: &Point, b: &Self| -> Point {
-    Point {
+impl_op_ex!(+ |a: &Vec2, b: &Self| -> Vec2 {
+    Vec2 {
         x: a.x + b.x,
         y: a.y + b.y
     }
 });
 
-impl_op_ex_commutative!(+ |a: &Point, b: f64| -> Point {
-    Point {
+impl_op_ex_commutative!(+ |a: &Vec2, b: f64| -> Vec2 {
+    Vec2 {
         x: a.x + b,
         y: a.y + b
     }
 });
 
-impl_op_ex!(+= |a: &mut Point, b: &Self| {
+impl_op_ex!(+= |a: &mut Vec2, b: &Self| {
     a.x += b.x;
     a.y += b.y;
 });
 
-impl_op_ex!(+= |a: &mut Point, b: f64| {
+impl_op_ex!(+= |a: &mut Vec2, b: f64| {
     a.x += b;
     a.y += b;
 });
 
-impl_op_ex!(-|a: &Point, b: &Point| -> Point {
-    Point {
+impl_op_ex!(-|a: &Vec2, b: &Vec2| -> Vec2 {
+    Vec2 {
         x: a.x - b.x,
         y: a.y - b.y,
     }
 });
 
-impl_op_ex_commutative!(-|a: &Point, b: f64| -> Point {
-    Point {
+impl_op_ex_commutative!(-|a: &Vec2, b: f64| -> Vec2 {
+    Vec2 {
         x: a.x - b,
         y: a.y - b,
     }
 });
 
-impl_op_ex!(-= |a: &mut Point, b: &Self| {
+impl_op_ex!(-= |a: &mut Vec2, b: &Self| {
     a.x -= b.x;
     a.y -= b.y;
 });
 
-impl_op_ex!(-= |a: &mut Point, b: f64| {
+impl_op_ex!(-= |a: &mut Vec2, b: f64| {
     a.x -= b;
     a.y -= b;
 });
 
-impl_op_ex!(*|a: &Point, b: &Point| -> Point {
-    Point {
+impl_op_ex!(*|a: &Vec2, b: &Vec2| -> Vec2 {
+    Vec2 {
         x: a.x * b.x,
         y: a.y * b.y,
     }
 });
 
-impl_op_ex_commutative!(*|a: &Point, b: f64| -> Point {
-    Point {
+impl_op_ex_commutative!(*|a: &Vec2, b: f64| -> Vec2 {
+    Vec2 {
         x: a.x * b,
         y: a.y * b,
     }
 });
 
-impl_op_ex!(*= |a: &mut Point, b: &Point| {
+impl_op_ex!(*= |a: &mut Vec2, b: &Vec2| {
     a.x *= b.x;
     a.y *= b.y;
 });
 
-impl_op_ex!(*= |a: &mut Point, b: f64| {
+impl_op_ex!(*= |a: &mut Vec2, b: f64| {
     a.x *= b;
     a.y *= b;
 });
 
-impl_op_ex!(/ |a: &Point, b: &Point| -> Point {
-    Point {
+impl_op_ex!(/ |a: &Vec2, b: &Vec2| -> Vec2 {
+    Vec2 {
         x: a.x / b.x,
         y: a.y / b.y
     }
 });
 
-impl_op_ex_commutative!(/ |a: &Point, b: f64| -> Point {
-    Point {
+impl_op_ex_commutative!(/ |a: &Vec2, b: f64| -> Vec2 {
+    Vec2 {
         x: a.x / b,
         y: a.y / b
     }
 });
 
-impl_op_ex!(/= |a: &mut Point, b: &Point| {
+impl_op_ex!(/= |a: &mut Vec2, b: &Vec2| {
     a.x /= b.x;
     a.y /= b.y;
 });
 
-impl_op_ex!(/= |a: &mut Point, b: f64| {
+impl_op_ex!(/= |a: &mut Vec2, b: f64| {
     a.x /= b;
     a.y /= b;
 });
