@@ -3,7 +3,7 @@ use std::time::{Duration, Instant};
 
 use generator::{image::load_image, slice2d::Slice2d, triangle_map::create_triangle_map};
 
-const RESOLUTION: usize = 11;
+const RESOLUTION: usize = 8;
 
 fn main() {
     let img = load_image("../dist/media/photo.png").expect("Could not load image :(");

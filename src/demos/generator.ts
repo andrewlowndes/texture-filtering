@@ -1,7 +1,8 @@
+import { vec2 } from "gl-matrix";
+
 import type { Triangle } from "../interfaces/Triangle";
-import { createRenderer } from "../draw/createRenderer";
 import { getTriangleCoverage } from "../draw/getTriangleCoverage";
-import { avg, equals, sub } from "../maths/common";
+import { equals, sub } from "../maths/point";
 import { getImageData } from "../utils/getImageData";
 
 const game = document.getElementById("game") as HTMLCanvasElement;
@@ -33,17 +34,17 @@ const createTriangleFittingMap = (imageData: ImageData, numIterations: number): 
     const xStep = (imageData.width-1) / (numIterations-1);
     const yStep = (imageData.height-1) / (numIterations-1);
 
-    const p1 = { x: 0, y: 0 };
-    const p2 = { x: 0, y: 0 };
-    const p3 = { x: 0, y: 0 };
+    const p1 = vec2.create();
+    const p2 = vec2.create();
+    const p3 = vec2.create();
 
     const triangle: Triangle = {
         p1,
         p2,
         p3,
-        e1: { x: 0, y: 0 },
-        e2: { x: 0, y: 0 },
-        e3: { x: 0, y: 0 },
+        e1: vec2.create(),
+        e2: vec2.create(),
+        e3: vec2.create(),
         points: [p1, p2, p3]
     };
 
@@ -53,31 +54,31 @@ const createTriangleFittingMap = (imageData: ImageData, numIterations: number): 
     let colour: ArrayLike<number>;
 
     for (let i=0, x1=0; x1<imageData.width; x1 += xStep) {
-        p1.x = Math.floor(x1);
+        p1[0] = Math.floor(x1);
         for (let y1=0; y1<imageData.height; y1 += yStep) {
-            p1.y = Math.floor(y1);
+            p1[1] = Math.floor(y1);
             for (let x2=0; x2<imageData.width; x2 += xStep) {
-                p2.x = Math.floor(x2);
+                p2[0] = Math.floor(x2);
                 for (let y2=0; y2<imageData.height; y2 += yStep) {
-                    p2.y = Math.floor(y2);
+                    p2[1] = Math.floor(y2);
                     
                     //convert degenerate triangles to valid triangles by offsetting the coords slightly
                     if (equals(p1, p2)) {
-                        p2.x = Math.floor(x2) + jitterAmount;
-                        p2.y += jitterAmount;
+                        p2[0] = Math.floor(x2) + jitterAmount;
+                        p2[1] += jitterAmount;
                     }
 
                     triangle.e1 = sub(p2, p1);
 
                     for (let x3=0; x3<imageData.width; x3 += xStep) {
-                        p3.x = Math.floor(x3);
+                        p3[0] = Math.floor(x3);
                         for (let y3=0; y3<imageData.height; y3 += yStep, i+=4) {
-                            p3.y = Math.floor(y3);
+                            p3[1] = Math.floor(y3);
                             
                             //convert degenerate triangles to valid triangles by offsetting the coords slightly
                             if (equals(p2, p3) || equals(p1, p3)) {
-                                p3.x = Math.floor(x3) + jitterAmount2;
-                                p3.y += jitterAmount2;
+                                p3[0] = Math.floor(x3) + jitterAmount2;
+                                p3[1] += jitterAmount2;
                             }
 
                             triangle.e2 = sub(p3, p2);

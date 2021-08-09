@@ -2,11 +2,9 @@ import { createRenderer } from "../draw/createRenderer";
 import { createSummedTextureWebgl } from "../draw/createSummedTextureWebgl";
 import { makeLogScale } from "../maths/makeLogScale";
 import { getImageData } from "../utils/getImageData";
-import { loadShader } from "../webgl/loadShader";
-import { createProgram } from "../webgl/createProgram";
+import { createProgramFromShader } from "../webgl/createProgramFromShader";
 
-import vertCode from '../shaders/blur.vert';
-import fragCode from '../shaders/blur.frag';
+import { blur } from '../shaders/blur';
 
 const game = document.getElementById("game") as HTMLCanvasElement;
 const image = document.getElementById("image") as HTMLImageElement;
@@ -37,7 +35,7 @@ const render = (program: WebGLProgram, screenTriangle: WebGLVertexArrayObject) =
 
     gl.bindVertexArray(screenTriangle);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
-
+    gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4));
     timetaken.innerText = `${(Date.now() - startTime)} ms`;
 };
 
@@ -46,9 +44,7 @@ const start = () => {
 
     gl.clearColor(0, 0, 0, 0);
 
-    const vertShader = loadShader(gl, vertCode, gl.VERTEX_SHADER);
-    const fragShader = loadShader(gl, fragCode, gl.FRAGMENT_SHADER);
-    const program = createProgram(gl, vertShader, fragShader);
+    const program = createProgramFromShader(gl, blur);
 
     //buffers
     const screenTriangle = gl.createVertexArray();

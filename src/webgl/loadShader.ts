@@ -13,7 +13,7 @@ export const loadShader = (gl: WebGL2RenderingContext, source: string, type: Web
     if (!compiled) {
       const errorMessage = gl.getShaderInfoLog(shader);
       gl.deleteShader(shader);
-      throw new Error(`Error compiling shader: ${errorMessage}`);
+      throw new Error(`Error compiling shader: ${errorMessage}\n${source.split('\n').map((str, index) => `${index+1}:${str}`).join('\n')}`);
     }
 
     return shader;

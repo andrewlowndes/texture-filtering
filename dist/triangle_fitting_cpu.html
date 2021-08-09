@@ -3,15 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script>
-        window.onload = function() {
-            const appScript = document.createElement('script');
-            appScript.defer = true;
-            appScript.async = true;
-            appScript.src = "triangle_fitting_cpu.js";
-            document.head.appendChild(appScript);
-        };
-    </script>
     <style>
       .label-text {
         display: inline-block;
@@ -66,11 +57,32 @@
         -ms-interpolation-mode: nearest-neighbor;
       }
     </style>
+    <script>
+        const load = (srcs) => new Promise((resolve, reject) => {
+            return srcs.map((src) => {
+                const script = document.createElement('script');
+                Object.assign(script, {
+                    defer: true,
+                    async: true,
+                    src: src,
+                    onload: resolve,
+                    onerror: reject
+                });
+                document.head.appendChild(script);
+                return script;
+            });
+        });
+
+        window.onload = async () => {
+            await load(["shared.js"]);
+            await load(["triangle_fitting_cpu.js"]);
+        };
+    </script>
   </head>
   <body>
     <h2>Approximated triangle fitting - CPU</h2>
 
-    <p>The map generation logic has been disabled for this demo - the pre-computed maps are used instead, see the readme on how to generate these.</p>
+    <p>The map generation logic has been disabled for this demo - the pre-computed maps are used instead, see the readme on how to generate these. Move the triangle with the mouse, scale the triangle using the mouse wheel</p>
 
     <div>
       <canvas id="game" width="512" height="512"></canvas>
@@ -92,7 +104,12 @@
           <option value="8">8</option>
           <option value="9">9</option>
           <option value="10">10</option>
-          <option selected value="11">11</option>
+          <option value="11">11</option>
+          <option selected value="12">12</option>
+          <option disabled value="13">13</option>
+          <option disabled value="14">14</option>
+          <option disabled value="15">15</option>
+          <option disabled value="16">16</option>
         </select>
       </label>
     </div>

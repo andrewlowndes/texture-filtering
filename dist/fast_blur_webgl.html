@@ -3,15 +3,6 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <script>
-        window.onload = function() {
-            const appScript = document.createElement('script');
-            appScript.defer = true;
-            appScript.async = true;
-            appScript.src = "fast_blur_webgl.js";
-            document.head.appendChild(appScript);
-        };
-    </script>
     <style>
       .label-text {
         display: inline-block;
@@ -45,6 +36,27 @@
         font-weight: bold;
       }
     </style>
+    <script>
+        const load = (srcs) => new Promise((resolve, reject) => {
+            return srcs.map((src) => {
+                const script = document.createElement('script');
+                Object.assign(script, {
+                    defer: true,
+                    async: true,
+                    src: src,
+                    onload: resolve,
+                    onerror: reject
+                });
+                document.head.appendChild(script);
+                return script;
+            });
+        });
+
+        window.onload = async () => {
+            await load(["shared.js"]);
+            await load(["fast_blur_webgl.js"]);
+        };
+    </script>
   </head>
   <body>
     <h1>Fast Blur (using accumulated sums) - WebGL 2.0</h1>

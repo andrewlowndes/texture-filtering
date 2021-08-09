@@ -1,4 +1,3 @@
-import { Aabb } from "./Aabb";
 import { Point } from "./Point";
 
 export interface Triangle {
@@ -19,6 +18,4 @@ export interface Triangle {
   }
 
   center?: Point;
-
-  aabb?: Aabb;
 }
