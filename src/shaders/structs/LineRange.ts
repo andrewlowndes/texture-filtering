@@ -1,7 +1,7 @@
-import type { ShaderCode } from "../../interfaces/ShaderCode";
+import type { ShaderCode } from '../../interfaces/ShaderCode';
 
 export const LineRange: ShaderCode = {
-    text: /* glsl */`
+    text: /* glsl */ `
         struct LineRange {
             vec2 pStart;
             vec2 pEnd;

@@ -1,7 +1,7 @@
-import type { ShaderCode } from "../../interfaces/ShaderCode";
+import type { ShaderCode } from '../../interfaces/ShaderCode';
 
 export const sort: ShaderCode = {
-    text: /* glsl */`
+    text: /* glsl */ `
         vec4 sort(vec4 nums) {
             float a = min(nums.x, nums.y);
             float b = max(nums.x, nums.y);

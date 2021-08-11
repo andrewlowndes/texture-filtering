@@ -1,26 +1,26 @@
-import type { ShaderCode } from "../../interfaces/ShaderCode";
-import { ShaderParameter } from "../../interfaces/ShaderParameter";
-import { callShaderSnippet } from "../../webgl/callShaderSnippet";
-import { createShaderSnippetInstance } from "../../webgl/createShaderSnippetInstance";
-import { snippetResult } from "../../webgl/snippetResult";
-import { intersectTriangleSquare } from "../intersect/intersectTriangleSquare";
-import { epsilon } from "../maths/epsilon";
-import { vec2Determinant } from "../maths/vec2Determinant";
-import { Aabb } from "../structs/Aabb";
-import { Triangle } from "../structs/Triangle";
-import { triangleArea } from "../triangle/triangleArea";
-import { rasterise } from "./rasterise";
+import type { ShaderCode } from '../../interfaces/ShaderCode';
+import type { ShaderParameter } from '../../interfaces/ShaderParameter';
+import { callShaderSnippet } from '../../webgl/callShaderSnippet';
+import { createShaderSnippetInstance } from '../../webgl/createShaderSnippetInstance';
+import { snippetResult } from '../../webgl/snippetResult';
+import { intersectTriangleSquare } from '../intersect/intersectTriangleSquare';
+import { epsilon } from '../maths/epsilon';
+import { vec2Determinant } from '../maths/vec2Determinant';
+import { Aabb } from '../structs/Aabb';
+import { Triangle } from '../structs/Triangle';
+import { triangleArea } from '../triangle/triangleArea';
+import { rasterise } from './rasterise';
 
 const rasteriseResult: Array<ShaderParameter> = [
-    { qualifier: 'inout', type: "vec4", name: "colour" },
-    { qualifier: 'inout', type: "int", name: "numPixels" },
-    { qualifier: 'in', type: "sampler2D", name: "texture" },
-    { qualifier: 'in', type: "Triangle", name: "triangle" },
-    { qualifier: 'in', type: "Triangle", name: "edges" }
+    { qualifier: 'inout', type: 'vec4', name: 'colour' },
+    { qualifier: 'inout', type: 'int', name: 'numPixels' },
+    { qualifier: 'in', type: 'sampler2D', name: 'texture' },
+    { qualifier: 'in', type: 'Triangle', name: 'triangle' },
+    { qualifier: 'in', type: 'Triangle', name: 'edges' }
 ];
 
 const rasteriseCallbackParams: Array<ShaderParameter> = [
-    { qualifier: 'in', type: 'uvec3', name: 'range' }, 
+    { qualifier: 'in', type: 'uvec3', name: 'range' },
     { qualifier: 'in', type: 'bool', name: 'isInside' }
 ];
 
@@ -32,7 +32,7 @@ const rasteriseLines = createShaderSnippetInstance({
             resultObjs: rasteriseResult,
             snippet: {
                 params: rasteriseCallbackParams,
-                text: () => /* glsl */`
+                text: () => /* glsl */ `
                     for (uint x=range.x; x<=range.y; x++) {
                         ${snippetResult}colour += texelFetch(${snippetResult}texture, ivec2(x, range.z), 0);
                         ${snippetResult}numPixels += 1;
@@ -52,7 +52,7 @@ const rasteriseTriangle = createShaderSnippetInstance({
             resultObjs: rasteriseResult,
             snippet: {
                 params: rasteriseCallbackParams,
-                text: () => /* glsl */`
+                text: () => /* glsl */ `
                     if (isInside) {
                         for (uint x=range.x; x<range.y; x++) {
                             ${snippetResult}colour += texelFetch(${snippetResult}texture, ivec2(x, range.z), 0);
@@ -86,14 +86,14 @@ const rasteriseTriangle = createShaderSnippetInstance({
                         }
                     }
                 `
-            },
+            }
         })
     ]
 });
 
 export const triangleCoverage: ShaderCode = {
     dependencies: [Triangle, triangleArea, rasteriseLines, rasteriseTriangle, epsilon],
-    text: /* glsl */`
+    text: /* glsl */ `
         vec4 triangleCoverage(Triangle triangle, sampler2D texture) {
             float area = triangleArea(triangle);
 
@@ -104,11 +104,19 @@ export const triangleCoverage: ShaderCode = {
             
             //if the triangle is degenerate and has no area then we just average the colours the lines cover
             if (area < 1.0) {
-                ${callShaderSnippet(rasteriseLines, ['triangle'], ["colour", "numPixels", "texture", "triangle", "edges"])}
+                ${callShaderSnippet(
+                    rasteriseLines,
+                    ['triangle'],
+                    ['colour', 'numPixels', 'texture', 'triangle', 'edges']
+                )}
                 return colour / float(numPixels);
             }
             
-            ${callShaderSnippet(rasteriseTriangle, ['triangle'], ["colour", "numPixels", "texture", "triangle", "edges"])}
+            ${callShaderSnippet(
+                rasteriseTriangle,
+                ['triangle'],
+                ['colour', 'numPixels', 'texture', 'triangle', 'edges']
+            )}
             return colour / area;
         }
     `

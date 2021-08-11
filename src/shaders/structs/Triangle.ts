@@ -1,7 +1,7 @@
-import type { ShaderCode } from "../../interfaces/ShaderCode";
+import type { ShaderCode } from '../../interfaces/ShaderCode';
 
 export const Triangle: ShaderCode = {
-    text: /* glsl */`
+    text: /* glsl */ `
         struct Triangle {
             vec2 p1;
             vec2 p2;

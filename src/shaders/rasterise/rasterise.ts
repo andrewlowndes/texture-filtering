@@ -1,20 +1,18 @@
-import type { ShaderSnippet, ShaderSnippetInstance } from "../../interfaces/ShaderSnippet";
-import { callShaderSnippet } from "../../webgl/callShaderSnippet";
-import { getLineRange } from "../line/getLineRange";
-import { solveLineX } from "../line/solveLineX";
-import { Line } from "../structs/Line";
-import { LineRange } from "../structs/LineRange";
-import { Triangle } from "../structs/Triangle";
-import { triangleMax } from "../triangle/triangleMax";
-import { triangleMin } from "../triangle/triangleMin";
+import type { ShaderSnippet, ShaderSnippetInstance } from '../../interfaces/ShaderSnippet';
+import { callShaderSnippet } from '../../webgl/callShaderSnippet';
+import { getLineRange } from '../line/getLineRange';
+import { solveLineX } from '../line/solveLineX';
+import { Line } from '../structs/Line';
+import { LineRange } from '../structs/LineRange';
+import { Triangle } from '../structs/Triangle';
+import { triangleMax } from '../triangle/triangleMax';
+import { triangleMin } from '../triangle/triangleMin';
 
 //note: this is a conservative rasteriser
 export const rasterise: ShaderSnippet = {
     dependencies: [triangleMin, triangleMax, Line, LineRange, getLineRange, Triangle, solveLineX],
-    params: [
-        { qualifier: 'in', type: 'Triangle', name: 'triangle' }
-    ],
-    text: (cb: ShaderSnippetInstance) => /* glsl */`
+    params: [{ qualifier: 'in', type: 'Triangle', name: 'triangle' }],
+    text: (cb: ShaderSnippetInstance) => /* glsl */ `
         vec2 minPos = triangleMin(triangle);
         vec2 maxPos = triangleMax(triangle);
 
@@ -30,14 +28,15 @@ export const rasterise: ShaderSnippet = {
             getLineRange(lines[2])
         );
         
-        if (maxPos.y - minPos.y < 1.0) {
-            ${callShaderSnippet(cb, ['uvec3(minPos.x, maxPos.x, minPos.y)', 'false'])}
+        int maxY = int(ceil(maxPos.y));
+        int prevY = int(minPos.y);
+        
+        if (maxY - prevY < 1) {
+            ${callShaderSnippet(cb, ['uvec3(minPos.x, maxPos.x, prevY)', 'false'])}
             return;
         }
 
-        int prevY = int(minPos.y);
-
-        for (int y=prevY+1; y<=int(ceil(maxPos.y)); y++) {
+        for (int y=prevY+1; y<=maxY; y++) {
             //we just need to get four numbers, the outer min and max and inner min and max values
             ivec4 range = ivec4(-1);
 
@@ -83,12 +82,13 @@ export const rasterise: ShaderSnippet = {
                 }
             }
 
-            ${callShaderSnippet(cb, ['uvec3(range.x, range.y, prevY)', 'false'])}
-
             //we have an inside
             if (range.z > range.y) {
+                ${callShaderSnippet(cb, ['uvec3(range.x, range.y, prevY)', 'false'])}
                 ${callShaderSnippet(cb, ['uvec3(range.y + 1, range.z - 1, prevY)', 'true'])}
                 ${callShaderSnippet(cb, ['uvec3(range.z, range.w, prevY)', 'false'])}
+            } else {
+                ${callShaderSnippet(cb, ['uvec3(range.x, max(range.y, range.w), prevY)', 'false'])}
             }
 
             prevY = y;

@@ -1,10 +1,10 @@
-import type { ShaderCode } from "../../interfaces/ShaderCode";
-import { Aabb } from "../structs/Aabb";
-import { inverseLerp } from "../maths/inverseLerp";
+import type { ShaderCode } from '../../interfaces/ShaderCode';
+import { Aabb } from '../structs/Aabb';
+import { inverseLerp } from '../maths/inverseLerp';
 
 export const intersectLineSquare: ShaderCode = {
     dependencies: [Aabb, inverseLerp],
-    text: /* glsl */`
+    text: /* glsl */ `
         vec4 intersectLineSquare(vec2 pos, vec2 dir, Aabb bounds) {
             return vec4(
                 inverseLerp(pos.x, dir.x, bounds.minPos.x),

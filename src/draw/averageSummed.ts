@@ -1,13 +1,13 @@
-import { SummedTexture } from "../interfaces/SummedTexture";
-import { add4Mutate } from "../utils/add4Mutate";
-import { floor4Mutate } from "../utils/floor4Mutate";
-import { scale4Mutate } from "../utils/scale4Mutate";
-import { subtract4Mutate } from "../utils/subtract4Mutate";
-import { getPixel } from "./canvas";
+import type { SummedTexture } from '../interfaces/SummedTexture';
+import { add4Mutate } from '../utils/add4Mutate';
+import { floor4Mutate } from '../utils/floor4Mutate';
+import { scale4Mutate } from '../utils/scale4Mutate';
+import { subtract4Mutate } from '../utils/subtract4Mutate';
+import { getPixel } from './canvas';
 
 const getSummedTextureVal = (summedTexture: SummedTexture, x: number, y: number) => {
     try {
-        const result = x >= 0 && y >= 0 ? summedTexture[y][x] : [0,0,0,0];
+        const result = x >= 0 && y >= 0 ? summedTexture[y][x] : [0, 0, 0, 0];
 
         if (result === undefined) {
             throw Error('No summed texture value');
@@ -21,7 +21,7 @@ const getSummedTextureVal = (summedTexture: SummedTexture, x: number, y: number)
 };
 
 const getSummedArea = (summedTexture: SummedTexture, x: number, y: number, x2: number, y2: number) => {
-    const result = [0,0,0,0];
+    const result = [0, 0, 0, 0];
 
     try {
         add4Mutate(result, getSummedTextureVal(summedTexture, x2, y2));
@@ -43,7 +43,14 @@ const getSummedArea = (summedTexture: SummedTexture, x: number, y: number, x2: n
 };
 
 //results in up to 24 texture lookups based on complexity of range, whatever size the image is
-export const averageSummed = (summedTexture: SummedTexture, imageData: ImageData, x: number, y: number, x2: number, y2: number) => {
+export const averageSummed = (
+    summedTexture: SummedTexture,
+    imageData: ImageData,
+    x: number,
+    y: number,
+    x2: number,
+    y2: number
+) => {
     const startCellX = Math.floor(x);
     const startCellY = Math.floor(y);
     const endCellX = Math.floor(x2);
@@ -53,24 +60,24 @@ export const averageSummed = (summedTexture: SummedTexture, imageData: ImageData
     if (startCellX == endCellX && startCellY == endCellY) {
         return floor4Mutate(getPixel(imageData, startCellX, startCellY));
     }
-    
+
     const width = x2 - x;
     const height = y2 - y;
     const pixelArea = width * height;
     const colourNormaliser = 1 / pixelArea;
-    
+
     const innerCellX = Math.ceil(x);
     const innerCellY = Math.ceil(y);
     const innerCellX2 = Math.floor(x2);
     const innerCellY2 = Math.floor(y2);
-    
-    const leftDiff = innerCellX-x;
-    const topDiff = innerCellY-y;
-    const rightDiff = x2-innerCellX2;
-    const bottomDiff = y2-innerCellY2;
 
-    const colour = [0,0,0,0];
-    
+    const leftDiff = innerCellX - x;
+    const topDiff = innerCellY - y;
+    const rightDiff = x2 - innerCellX2;
+    const bottomDiff = y2 - innerCellY2;
+
+    const colour = [0, 0, 0, 0];
+
     //single horizontal strip
     if (startCellX == endCellX) {
         if (topDiff) {
@@ -79,10 +86,16 @@ export const averageSummed = (summedTexture: SummedTexture, imageData: ImageData
         if (bottomDiff) {
             add4Mutate(colour, scale4Mutate(getPixel(imageData, endCellX, endCellY), width * bottomDiff));
         }
-        add4Mutate(colour, scale4Mutate(getSummedArea(summedTexture, startCellX-1, innerCellY-1, startCellX, innerCellY2-1), width));
+        add4Mutate(
+            colour,
+            scale4Mutate(
+                getSummedArea(summedTexture, startCellX - 1, innerCellY - 1, startCellX, innerCellY2 - 1),
+                width
+            )
+        );
         return floor4Mutate(scale4Mutate(colour, colourNormaliser));
     }
-    
+
     //single vertical strip
     if (startCellY == endCellY) {
         if (leftDiff) {
@@ -91,7 +104,13 @@ export const averageSummed = (summedTexture: SummedTexture, imageData: ImageData
         if (rightDiff) {
             add4Mutate(colour, scale4Mutate(getPixel(imageData, endCellX, endCellY), height * rightDiff));
         }
-        add4Mutate(colour, scale4Mutate(getSummedArea(summedTexture, innerCellX-1, startCellY-1, innerCellX2-1, startCellY), height));
+        add4Mutate(
+            colour,
+            scale4Mutate(
+                getSummedArea(summedTexture, innerCellX - 1, startCellY - 1, innerCellX2 - 1, startCellY),
+                height
+            )
+        );
         return floor4Mutate(scale4Mutate(colour, colourNormaliser));
     }
 
@@ -118,24 +137,48 @@ export const averageSummed = (summedTexture: SummedTexture, imageData: ImageData
 
     //fractional strips
     if (topDiff) {
-        add4Mutate(colour, scale4Mutate(getSummedArea(summedTexture, innerCellX-1, startCellY-1, innerCellX2-1, startCellY), topDiff));
+        add4Mutate(
+            colour,
+            scale4Mutate(
+                getSummedArea(summedTexture, innerCellX - 1, startCellY - 1, innerCellX2 - 1, startCellY),
+                topDiff
+            )
+        );
     }
 
     if (leftDiff) {
-        add4Mutate(colour, scale4Mutate(getSummedArea(summedTexture, startCellX-1, innerCellY-1, startCellX, innerCellY2-1), leftDiff));
+        add4Mutate(
+            colour,
+            scale4Mutate(
+                getSummedArea(summedTexture, startCellX - 1, innerCellY - 1, startCellX, innerCellY2 - 1),
+                leftDiff
+            )
+        );
     }
 
     if (bottomDiff) {
-        add4Mutate(colour, scale4Mutate(getSummedArea(summedTexture, innerCellX-1, endCellY-1, innerCellX2-1, endCellY), bottomDiff));
+        add4Mutate(
+            colour,
+            scale4Mutate(
+                getSummedArea(summedTexture, innerCellX - 1, endCellY - 1, innerCellX2 - 1, endCellY),
+                bottomDiff
+            )
+        );
     }
 
     if (rightDiff) {
-        add4Mutate(colour, scale4Mutate(getSummedArea(summedTexture, endCellX-1, innerCellY-1, endCellX, innerCellY2-1), rightDiff));
+        add4Mutate(
+            colour,
+            scale4Mutate(
+                getSummedArea(summedTexture, endCellX - 1, innerCellY - 1, endCellX, innerCellY2 - 1),
+                rightDiff
+            )
+        );
     }
 
     //inner parts
-    add4Mutate(colour, getSummedArea(summedTexture, innerCellX-1, innerCellY-1, innerCellX2-1, innerCellY2-1));
-    
+    add4Mutate(colour, getSummedArea(summedTexture, innerCellX - 1, innerCellY - 1, innerCellX2 - 1, innerCellY2 - 1));
+
     //now we have an accumulative pixel value that covers the whole area so just average it
     return floor4Mutate(scale4Mutate(colour, colourNormaliser));
 };

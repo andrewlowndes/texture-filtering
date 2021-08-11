@@ -1,10 +1,10 @@
-import type { ShaderCode } from "../interfaces/ShaderCode";
-import type { ShaderPart } from "../interfaces/ShaderPart";
-import type { ShaderSnippetInstance } from "../interfaces/ShaderSnippet";
-import type { ShaderStage } from "../interfaces/ShaderStage";
-import { defineShaderSnippet } from "./defineShaderSnippet";
+import type { ShaderCode } from '../interfaces/ShaderCode';
+import type { ShaderPart } from '../interfaces/ShaderPart';
+import type { ShaderSnippetInstance } from '../interfaces/ShaderSnippet';
+import type { ShaderStage } from '../interfaces/ShaderStage';
+import { defineShaderSnippet } from './defineShaderSnippet';
 
-export const buildShaderStage = (shader: ShaderStage, version: string) => {    
+export const buildShaderStage = (shader: ShaderStage, version: string) => {
     let testDependencies = new Set(shader.dependencies || []);
     const allDependencies = new Set(testDependencies);
 
@@ -30,14 +30,14 @@ export const buildShaderStage = (shader: ShaderStage, version: string) => {
         for (const dependency of testDependencies) {
             if ('snippet' in dependency) {
                 const instance = dependency as ShaderSnippetInstance;
-                
+
                 addDependencies(instance.snippet.dependencies);
                 addDependencies(instance.params);
             }
 
             addDependencies(dependency.dependencies);
         }
-    
+
         testDependencies = nextSet;
     }
 
@@ -47,15 +47,17 @@ export const buildShaderStage = (shader: ShaderStage, version: string) => {
 
         ${shader.head ?? ''}
 
-        ${dependencies.map(dependency => {
-            const dep = dependency as ShaderCode | ShaderSnippetInstance;
+        ${dependencies
+            .map((dependency) => {
+                const dep = dependency as ShaderCode | ShaderSnippetInstance;
 
-            if ('snippet' in dep) {
-                return defineShaderSnippet(dep);
-            } else {
-                return dep.text;
-            }
-        }).join('\n')}
+                if ('snippet' in dep) {
+                    return defineShaderSnippet(dep);
+                } else {
+                    return dep.text;
+                }
+            })
+            .join('\n')}
     
         void main(void) {
             ${shader.main}

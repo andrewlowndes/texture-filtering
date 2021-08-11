@@ -1,4 +1,3 @@
-
 export const createRenderer = (renderFunc: () => void, afterRenderFunc?: () => void) => {
     let drawing = false;
 
@@ -11,5 +10,5 @@ export const createRenderer = (renderFunc: () => void, afterRenderFunc?: () => v
                 afterRenderFunc?.();
             });
         }
-    }
+    };
 };

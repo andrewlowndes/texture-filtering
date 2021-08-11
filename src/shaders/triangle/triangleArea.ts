@@ -1,10 +1,10 @@
-import type { ShaderCode } from "../../interfaces/ShaderCode";
-import { Triangle } from "../structs/Triangle";
-import { vec2Determinant } from "../maths/vec2Determinant";
+import type { ShaderCode } from '../../interfaces/ShaderCode';
+import { Triangle } from '../structs/Triangle';
+import { vec2Determinant } from '../maths/vec2Determinant';
 
 export const triangleArea: ShaderCode = {
     dependencies: [Triangle, vec2Determinant],
-    text: /* glsl */`
+    text: /* glsl */ `
         float triangleArea(Triangle triangle) {
             return abs((
                 vec2Determinant(triangle.p1, triangle.p2) +

@@ -77,3 +77,9 @@ The WebGL2 GPU version far exceeds performance and scalability than all other CP
 Method:
  - project the pixel area onto surfaces instead of using rays
  - use the triangle fitting algorithm to accelerate the gather of the coverage for textures
+
+## Development
+Install VS Code and the following extensions:
+- EditorConfig for VS Code
+- ESLint
+- Prettier

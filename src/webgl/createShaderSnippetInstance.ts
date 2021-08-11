@@ -1,4 +1,4 @@
-import { ShaderSnippetInstance } from "../interfaces/ShaderSnippet";
+import type { ShaderSnippetInstance } from '../interfaces/ShaderSnippet';
 
 let uniqueName = 0;
 

@@ -1,29 +1,29 @@
-import type { SummedTexture } from "../interfaces/SummedTexture";
-import { averageNaive } from "../draw/averageNaive";
-import { averageSummed } from "../draw/averageSummed";
-import { getPixel, setPixel } from "../draw/canvas";
-import { createRenderer } from "../draw/createRenderer";
-import { createSummedTexture } from "../draw/createSummedTexture";
-import { clamp } from "../utils/clamp";
-import { getImageData } from "../utils/getImageData";
+import type { SummedTexture } from '../interfaces/SummedTexture';
+import { averageNaive } from '../draw/averageNaive';
+import { averageSummed } from '../draw/averageSummed';
+import { getPixel, setPixel } from '../draw/canvas';
+import { createRenderer } from '../draw/createRenderer';
+import { createSummedTexture } from '../draw/createSummedTexture';
+import { getImageData } from '../utils/getImageData';
+import { clamp } from '../maths/common';
 
-const game = document.getElementById("game") as HTMLCanvasElement;
-const image = document.getElementById("image") as HTMLImageElement;
-const method = document.getElementById("method") as HTMLInputElement;
-const imageInput = document.getElementById("chooseimage") as HTMLInputElement;
-const scaleInput = document.getElementById("scale") as HTMLInputElement;
-const xoffsetInput = document.getElementById("xoffset") as HTMLInputElement;
-const yoffsetInput = document.getElementById("yoffset") as HTMLInputElement;
-const scaleValueInput = document.getElementById("scalevalue") as HTMLInputElement;
-const xoffsetValueInput = document.getElementById("xoffsetvalue") as HTMLInputElement;
-const yoffsetValueInput = document.getElementById("yoffsetvalue") as HTMLInputElement;
-const timetaken = document.getElementById("timetaken") as HTMLSpanElement;
+const game = document.getElementById('game') as HTMLCanvasElement;
+const image = document.getElementById('image') as HTMLImageElement;
+const method = document.getElementById('method') as HTMLInputElement;
+const imageInput = document.getElementById('chooseimage') as HTMLInputElement;
+const scaleInput = document.getElementById('scale') as HTMLInputElement;
+const xoffsetInput = document.getElementById('xoffset') as HTMLInputElement;
+const yoffsetInput = document.getElementById('yoffset') as HTMLInputElement;
+const scaleValueInput = document.getElementById('scalevalue') as HTMLInputElement;
+const xoffsetValueInput = document.getElementById('xoffsetvalue') as HTMLInputElement;
+const yoffsetValueInput = document.getElementById('yoffsetvalue') as HTMLInputElement;
+const timetaken = document.getElementById('timetaken') as HTMLSpanElement;
 
-const g = game.getContext("2d")!;
+const g = game.getContext('2d')!;
 
-let scale: number = 0.33;
-let xoffset: number = 0;
-let yoffset: number = 0;
+let scale = 0.33;
+let xoffset = 0;
+let yoffset = 0;
 
 const drawImage = (summedTexture: SummedTexture, imageData: ImageData) => {
     //now render a scaled down size of the texture on the canvas (per-pixel) using the sample summing approach
@@ -51,21 +51,21 @@ const drawImage = (summedTexture: SummedTexture, imageData: ImageData) => {
 
     const maxY = game.height - 1;
     const maxX = game.width - 1;
-    
+
     for (let y = Math.max(0, yoffset); y < Math.min(game.height * scale + yoffset, game.height); y++) {
         for (let x = Math.max(0, xoffset); x < Math.min(game.width * scale + xoffset, game.width); x++) {
             const plotX = clamp((x - xoffset) / scale, 0, maxX);
             const plotY = clamp((y - yoffset) / scale, 0, maxY);
             const plotX2 = clamp((x + 1 - xoffset) / scale, 0, maxX);
             const plotY2 = clamp((y + 1 - yoffset) / scale, 0, maxY);
-            
+
             setPixel(canvasImage, x, y, pixelFunc(plotX, plotY, plotX2, plotY2));
         }
     }
-    
+
     g.putImageData(canvasImage, 0, 0);
 
-    timetaken.innerText = `${(Date.now() - startTime)} ms`;
+    timetaken.innerText = `${Date.now() - startTime} ms`;
 };
 
 const start = () => {
@@ -98,7 +98,7 @@ const start = () => {
         scale = parseFloat(scaleValueInput.value);
         draw();
     };
-    
+
     xoffsetValueInput.onchange = () => {
         xoffset = parseFloat(xoffsetValueInput.value);
         draw();

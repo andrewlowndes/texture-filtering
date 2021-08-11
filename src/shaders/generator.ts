@@ -1,25 +1,25 @@
-import type { Shader } from "../interfaces/Shader";
-import { triangleCoverage } from "./rasterise/triangleCoverage";
-import { Triangle } from "./structs/Triangle";
+import type { Shader } from '../interfaces/Shader';
+import { triangleCoverage } from './rasterise/triangleCoverage';
+import { Triangle } from './structs/Triangle';
 
 export const generator: Shader = {
     version: '300 es',
     vertex: {
-        head: /* glsl */`
+        head: /* glsl */ `
             const vec2[3] coords = vec2[3](
                 vec2(-1.0, 1.0),
                 vec2(3.0, 1.0),
                 vec2(-1.0, -3.0)
             );
         `,
-        main: /* glsl */`
+        main: /* glsl */ `
             gl_Position = vec4(coords[gl_VertexID], 0.0, 1.0);
         `
     },
     fragment: {
         dependencies: [Triangle, triangleCoverage],
-        head: /* glsl */`
-            precision highp float;
+        head: /* glsl */ `
+            precision mediump float;
 
             uniform vec2 uStep;
             uniform uint uResolution;
@@ -28,7 +28,7 @@ export const generator: Shader = {
 
             out vec4 outColor;
         `,
-        main: /* glsl */`
+        main: /* glsl */ `
             //start from the top left corner like the other solutions
             uvec2 pixelIndex = uvec2(gl_FragCoord.x, uSize - uint(gl_FragCoord.y));
             uint flatPixelIndex = pixelIndex.y * uSize + pixelIndex.x;

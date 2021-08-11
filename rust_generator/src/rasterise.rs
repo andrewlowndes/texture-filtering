@@ -84,11 +84,12 @@ pub fn rasterise<F: FnMut(usize, usize, usize, bool)>(triangle: &Triangle, mut c
         }
 
         //up to 3 entries per scanline, determining an inside range
-        callback(range.0 as usize, range.1 as usize, prev_y, false);
-
         if range.2 > range.1 {
+            callback(range.0 as usize, range.1 as usize, prev_y, false);
             callback((range.1 + 1) as usize, (range.2 - 1) as usize, prev_y, true);
             callback(range.2 as usize, range.3 as usize, prev_y, false);
+        } else {
+            callback(range.0 as usize, range.1.max(range.3) as usize, prev_y, false);
         }
     }
 }

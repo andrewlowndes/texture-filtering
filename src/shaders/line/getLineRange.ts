@@ -1,11 +1,11 @@
-import { ShaderCode } from "../../interfaces/ShaderCode";
-import { Line } from "../structs/Line";
-import { LineRange } from "../structs/LineRange";
-import { getLineEquation } from "./getLineEquation";
+import type { ShaderCode } from '../../interfaces/ShaderCode';
+import { Line } from '../structs/Line';
+import { LineRange } from '../structs/LineRange';
+import { getLineEquation } from './getLineEquation';
 
 export const getLineRange: ShaderCode = {
     dependencies: [Line, LineRange, getLineEquation],
-    text: /* glsl */`
+    text: /* glsl */ `
         LineRange getLineRange(Line line) {
             vec2 pStart;
             vec2 pEnd;

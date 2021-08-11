@@ -1,10 +1,10 @@
-import { ShaderCode } from "../../interfaces/ShaderCode";
-import { Line } from "../structs/Line";
-import { LineEquation } from "../structs/LineEquation";
+import type { ShaderCode } from '../../interfaces/ShaderCode';
+import { Line } from '../structs/Line';
+import { LineEquation } from '../structs/LineEquation';
 
 export const getLineEquation: ShaderCode = {
     dependencies: [Line, LineEquation],
-    text: /* glsl */`
+    text: /* glsl */ `
         LineEquation getLineEquation(Line line) {
             vec2 direction = line.p2 - line.p1;
 

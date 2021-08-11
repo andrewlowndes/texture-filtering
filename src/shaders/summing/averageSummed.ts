@@ -1,10 +1,10 @@
-import type { ShaderCode } from "../../interfaces/ShaderCode";
-import { getPixel } from "./getPixel";
-import { getSummedArea } from "./getSummedArea";
+import type { ShaderCode } from '../../interfaces/ShaderCode';
+import { getPixel } from './getPixel';
+import { getSummedArea } from './getSummedArea';
 
 export const averageSummed: ShaderCode = {
     dependencies: [getPixel, getSummedArea],
-    text: /* glsl */`
+    text: /* glsl */ `
         //results in up to 24 texture lookups based on complexity of range, whatever size the image is
         vec4 averageSummed(const in usampler2D summedTexture, const in sampler2D texture, const in vec2 minCoord, const in vec2 maxCoord) {
             ivec2 startCell = ivec2(floor(minCoord));

@@ -1,22 +1,22 @@
-import { createRenderer } from "../draw/createRenderer";
-import { createSummedTextureWebgl } from "../draw/createSummedTextureWebgl";
-import { makeLogScale } from "../maths/makeLogScale";
-import { getImageData } from "../utils/getImageData";
-import { createProgramFromShader } from "../webgl/createProgramFromShader";
+import { createRenderer } from '../draw/createRenderer';
+import { createSummedTextureWebgl } from '../draw/createSummedTextureWebgl';
+import { makeLogScale } from '../maths/makeLogScale';
+import { getImageData } from '../utils/getImageData';
+import { createProgramFromShader } from '../webgl/createProgramFromShader';
 
 import { blur } from '../shaders/blur';
 
-const game = document.getElementById("game") as HTMLCanvasElement;
-const image = document.getElementById("image") as HTMLImageElement;
-const amountInput = document.getElementById("amount") as HTMLInputElement;
-const amountValueInput = document.getElementById("amountvalue") as HTMLInputElement;
-const timetaken = document.getElementById("timetaken") as HTMLSpanElement;
+const game = document.getElementById('game') as HTMLCanvasElement;
+const image = document.getElementById('image') as HTMLImageElement;
+const amountInput = document.getElementById('amount') as HTMLInputElement;
+const amountValueInput = document.getElementById('amountvalue') as HTMLInputElement;
+const timetaken = document.getElementById('timetaken') as HTMLSpanElement;
 
 //need to use webgl 2 to be able to create a suitable summed texture without compression
-const gl = game.getContext("webgl2")!;
+const gl = game.getContext('webgl2')!;
 
 if (!gl) {
-    throw new Error("No WebGL2 Support :(");
+    throw new Error('No WebGL2 Support :(');
 }
 
 let blurAmount = 8;
@@ -36,7 +36,7 @@ const render = (program: WebGLProgram, screenTriangle: WebGLVertexArrayObject) =
     gl.bindVertexArray(screenTriangle);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
     gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4));
-    timetaken.innerText = `${(Date.now() - startTime)} ms`;
+    timetaken.innerText = `${Date.now() - startTime} ms`;
 };
 
 const start = () => {
@@ -72,14 +72,24 @@ const start = () => {
     // this means the summed texture can support summing for textures of up to 4096 x 4096 (plenty)
     const maxPixels = 4096 * 4096;
     if (image.width * image.height > maxPixels) {
-        throw new Error("Image too big, up to 4096 x 4096 supported");
+        throw new Error('Image too big, up to 4096 x 4096 supported');
     }
 
     const summedImage = createSummedTextureWebgl(getImageData(image));
 
     const summedTexture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, summedTexture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA32UI, image.width, image.height, 0, gl.RGBA_INTEGER, gl.UNSIGNED_INT, summedImage);
+    gl.texImage2D(
+        gl.TEXTURE_2D,
+        0,
+        gl.RGBA32UI,
+        image.width,
+        image.height,
+        0,
+        gl.RGBA_INTEGER,
+        gl.UNSIGNED_INT,
+        summedImage
+    );
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
@@ -88,19 +98,19 @@ const start = () => {
     //bind buffers to shader
     gl.useProgram(program);
 
-    const positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+    const positionAttributeLocation = gl.getAttribLocation(program, 'a_position');
     gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
     gl.enableVertexAttribArray(positionAttributeLocation);
     gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
-    const textureUniformLocation = gl.getUniformLocation(program, "u_texture");
+    const textureUniformLocation = gl.getUniformLocation(program, 'u_texture');
     gl.uniform1i(textureUniformLocation, 0);
     gl.activeTexture(gl.TEXTURE0);
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
-    blurUniformLocation = gl.getUniformLocation(program, "u_bluramount")!;
-    
-    const summedTextureUniformLocation = gl.getUniformLocation(program, "u_summedtexture");
+    blurUniformLocation = gl.getUniformLocation(program, 'u_bluramount')!;
+
+    const summedTextureUniformLocation = gl.getUniformLocation(program, 'u_summedtexture');
     gl.uniform1i(summedTextureUniformLocation, 1);
     gl.activeTexture(gl.TEXTURE1);
     gl.bindTexture(gl.TEXTURE_2D, summedTexture);
@@ -127,7 +137,7 @@ const start = () => {
 };
 
 if (image.complete) {
-    start() 
+    start();
 } else {
     image.onload = start;
 }

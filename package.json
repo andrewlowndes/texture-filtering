@@ -3,13 +3,29 @@
   "version": "1.0.0",
   "description": "An approach to approximating the radiance integration equation",
   "main": "build/index.js",
+  "engines": {
+    "node": ">=14.0.0"
+  },
   "scripts": {
+    "prepare": "husky install",
     "start": "webpack serve --open --config webpack.config.js",
-    "build": "webpack --config webpack.config.js --mode=production"
+    "build": "webpack --config webpack.config.js --mode=production",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "format": "prettier --config .prettierrc src/**/*.ts --write"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint && npm run format && npm run build"
+    }
   },
   "author": "Andrew Lowndes",
   "license": "MIT",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.29.1",
+    "@typescript-eslint/parser": "^4.29.1",
+    "eslint": "^7.32.0",
+    "husky": "^7.0.1",
+    "prettier": "^2.3.2",
     "ts-loader": "^9.2.5",
     "typescript": "^4.3.5",
     "webpack": "^5.49.0",

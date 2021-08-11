@@ -1,9 +1,9 @@
-import { ShaderParameter } from "./ShaderParameter";
-import { ShaderPart } from "./ShaderPart";
+import type { ShaderParameter } from './ShaderParameter';
+import type { ShaderPart } from './ShaderPart';
 
 //specialised instance of a shader snippet
 export interface ShaderSnippetInstance extends ShaderPart {
-    snippet: ShaderSnippet,
+    snippet: ShaderSnippet;
     name: string;
     params?: Array<ShaderSnippetInstance>;
     resultObjs: Array<ShaderParameter>;

@@ -1,7 +1,7 @@
-import { ShaderCode } from "../../interfaces/ShaderCode";
+import type { ShaderCode } from '../../interfaces/ShaderCode';
 
 export const epsilon: ShaderCode = {
-    text: /* glsl */`
+    text: /* glsl */ `
         const float epsilon = 0.00001;
     `
 };

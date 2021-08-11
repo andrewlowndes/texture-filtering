@@ -1,19 +1,19 @@
-import type { Shader } from "../interfaces/Shader";
-import { averageSummed } from "./summing/averageSummed";
+import type { Shader } from '../interfaces/Shader';
+import { averageSummed } from './summing/averageSummed';
 
 export const blur: Shader = {
-    version: "300 es",
+    version: '300 es',
     vertex: {
-        head: /* glsl */`
+        head: /* glsl */ `
             in vec2 a_position;
         `,
-        main: /* glsl */`
+        main: /* glsl */ `
             gl_Position = vec4(a_position, 0.0, 1.0);
         `
     },
     fragment: {
         dependencies: [averageSummed],
-        head: /* glsl */`
+        head: /* glsl */ `
             precision highp float;
             precision highp usampler2D;
 
@@ -23,7 +23,7 @@ export const blur: Shader = {
 
             out vec4 outColor;
         `,
-        main: /* glsl */`
+        main: /* glsl */ `
             ivec2 fragCoord = ivec2(gl_FragCoord.xy);
             vec2 tex_size = vec2(textureSize(u_summedtexture, 0));
 
