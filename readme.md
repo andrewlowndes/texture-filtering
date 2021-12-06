@@ -10,7 +10,7 @@ Visit https://andrewlowndes.github.io/texture-filtering/dist/ to see a set of de
 3. Run `npm start` to open the demos in a web app
 
 ## Roadmap
-- [x] Summed are tables
+- [x] Summed area tables
   - [x] Image lookup (CPU)
   - [x] Fast blur (CPU)
   - [x] Fast blur (GPU)
