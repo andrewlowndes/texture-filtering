@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>WebGL2 Generator for Summed triangle area maps</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport"
+        content="shrink-to-fit=no, width=device-width, user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+
+    <style>
+        .label-text {
+            display: inline-block;
+            vertical-align: middle;
+            width: 100px;
+        }
+
+        .control {
+            margin: 5px 0;
+        }
+
+        input[type="number"] {
+            width: 50px;
+        }
+
+        #game_wrap,
+        #image_preview {
+            border: 1px solid black;
+            width: 512px;
+            height: 512px;
+            display: inline-block;
+            vertical-align: top;
+            overflow: auto;
+            line-height: 0;
+        }
+
+        #report {
+            margin: 5px 0;
+            font-size: 110%;
+        }
+
+        #timetaken {
+            font-weight: bold;
+        }
+    </style>
+    <script>
+        const load = (srcs) => new Promise((resolve, reject) => {
+            return srcs.map((src) => {
+                const script = document.createElement('script');
+                Object.assign(script, {
+                    defer: true,
+                    async: true,
+                    src: src,
+                    onload: resolve,
+                    onerror: reject
+                });
+                document.head.appendChild(script);
+                return script;
+            });
+        });
+
+        window.onload = async () => {
+            await load(["shared.js"]);
+            await load(["summed_generator_webgl.js"]);
+        };
+    </script>
+</head>
+
+<body>
+    <h2>WebGL Generator for Summed triangle area maps</h2>
+    <p>
+        Generator for building precomputed summed triangle maps by offloading the generation to the GPU. A summed triangle map is the summed area for each possible line on the texture (2 coords) with the zero coordinate, forming a triangle for each line.
+    </p>
+
+    <p>
+        This can be used at run-time to determine the area under a triangle on the map by adding and subtracting the sums of the triangles from the lines that make up the triangle, based on the direction of the triangle (cross product)
+    </p>
+
+    <p>
+        <strong>Approach:</strong>
+        <ul>
+            <li>Write out a single texture (our pre-compiled texture map)</li>
+            <li>Reverse the fragCoord to determine the 2 line coords</li>
+            <li>Rasterise the triangle between the line coords and zero in the fragment shader, calculating a sum of all colour</li>
+        </ul>
+    </p>
+
+    <p>
+        <strong>Todo: optimsation</strong> - as the two points on a line can be flipped and produce the same area, we only need to sample the second point where it appears above the line to the first point. This will allows us to double the resolution of samples for the same image size.
+    </p>
+
+    <div>
+        <img id="image_preview" width="512" height="512" src="//:0" />
+        <div id="game_wrap">
+            <canvas id="game"></canvas>
+        </div>
+    </div>
+
+    <div class="control">
+        <label>
+            <span class="label-text">Image:</span>
+            <select id="chooseimage">
+                <option selected value="media/photo.png">Photo</option>
+                <option value="media/test.png">Lines</option>
+                <option value="media/sample.png">Pattern</option>
+            </select>
+        </label>
+    </div>
+
+    <div class="control">
+        <label>
+            <span class="label-text">Resolution:</span>
+            <select id="resolution">
+                <option selected value="16">16</option>
+                <option value="64">64</option>
+            </select>
+        </label>
+    </div>
+
+    <div class="control">
+        <div id="report">
+            <div>Time taken: <span id="timetaken">Generating, please wait...</span></div>
+        </div>
+    </div>
+</body>
+
+</html>

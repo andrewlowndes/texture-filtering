@@ -34,6 +34,14 @@ module.exports = {
       import: './src/demos/generatorWebgl.ts',
       dependOn: 'shared'
     },
+    'summed_generator_webgl': {
+      import: './src/demos/summedGeneratorWebgl.ts',
+      dependOn: 'shared'
+    },
+    'summed_triangle_fitting_cpu': {
+      import: './src/demos/summedTriangleFittingCpu.ts',
+      dependOn: 'shared'
+    },
     shared: ['gl-matrix'],
   },
   output: {
@@ -52,10 +60,8 @@ module.exports = {
     extensions: [ '.tsx', '.ts', '.js', '.html' ]
   },
   devServer: {
-    contentBase: buildPath,
-    injectClient: false,
-    injectHot: false,
-    liveReload: false,
-    hot: false
+      static: {
+        directory: buildPath
+      }
   }
 };

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      .label-text {
+        display: inline-block;
+        vertical-align: middle;
+        width: 100px;
+      }
+
+      .control {
+        margin: 5px 0;
+      }
+
+      input[type="number"] {
+        width: 50px;
+      }
+      
+      #game {
+        border: 1px solid black;
+      }
+
+      #trianglemap {
+        width: 512px;
+        height: 512px;
+        border: 1px solid black;
+        overflow: auto;
+        display: inline-block;
+        vertical-align: top;
+      }
+
+      #report {
+        margin: 5px 0;
+        font-size: 110%;
+      }
+
+      #timetaken, #generationtime {
+        font-weight: bold;
+      }
+
+      #cache-wrap {
+        width: 512px;
+        height: 512px;
+        overflow: auto;
+        display: inline-block;
+        border: 1px solid black;
+        line-height: 0;
+      }
+
+      #cache {
+        image-rendering: optimizeSpeed;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: optimize-contrast;
+        -ms-interpolation-mode: nearest-neighbor;
+      }
+    </style>
+    <script>
+        const load = (srcs) => new Promise((resolve, reject) => {
+            return srcs.map((src) => {
+                const script = document.createElement('script');
+                Object.assign(script, {
+                    defer: true,
+                    async: true,
+                    src: src,
+                    onload: resolve,
+                    onerror: reject
+                });
+                document.head.appendChild(script);
+                return script;
+            });
+        });
+
+        window.onload = async () => {
+            await load(["shared.js"]);
+            await load(["summed_triangle_fitting_cpu.js"]);
+        };
+    </script>
+  </head>
+  <body>
+    <h2>Approximated triangle fitting using summed triangle area maps - CPU</h2>
+
+    <p>The map generation logic has been disabled for this demo - the pre-computed maps are used instead, see the readme on how to generate these. Move the triangle with the mouse, scale the triangle using the mouse wheel</p>
+
+    <p><strong>Todo: </strong>this demo currently only uses 8 bits per channel but this can be increased to 32 bits for increased precision.</p>
+
+    <div>
+      <canvas id="game" width="512" height="512"></canvas>
+      <div id="cache-wrap">
+        <img id="cache" src="" />
+      </div>
+    </div>
+
+    <div class="control">
+      <label>
+        <span class="label-text">Resolution:</span>
+        <select id="resolution">
+            <option selected value="16">16</option>
+            <option value="64">64</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="control">
+      <div id="report">
+        <div>Time taken: <span id="timetaken"></span></div>
+      </div>
+    </div>
+  </body>
+</html>

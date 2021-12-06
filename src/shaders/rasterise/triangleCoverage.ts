@@ -4,7 +4,6 @@ import { callShaderSnippet } from '../../webgl/callShaderSnippet';
 import { createShaderSnippetInstance } from '../../webgl/createShaderSnippetInstance';
 import { snippetResult } from '../../webgl/snippetResult';
 import { intersectTriangleSquare } from '../intersect/intersectTriangleSquare';
-import { epsilon } from '../maths/epsilon';
 import { vec2Determinant } from '../maths/vec2Determinant';
 import { Aabb } from '../structs/Aabb';
 import { Triangle } from '../structs/Triangle';
@@ -92,9 +91,9 @@ const rasteriseTriangle = createShaderSnippetInstance({
 });
 
 export const triangleCoverage: ShaderCode = {
-    dependencies: [Triangle, triangleArea, rasteriseLines, rasteriseTriangle, epsilon],
+    dependencies: [Triangle, triangleArea, rasteriseLines, rasteriseTriangle],
     text: /* glsl */ `
-        vec4 triangleCoverage(Triangle triangle, sampler2D texture) {
+         vec4 triangleCoverage(Triangle triangle, sampler2D texture) {
             float area = triangleArea(triangle);
 
             Triangle edges = Triangle(triangle.p2 - triangle.p1, triangle.p3 - triangle.p2, triangle.p1 - triangle.p3);
