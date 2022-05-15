@@ -14,6 +14,7 @@ const game = document.getElementById('game') as HTMLCanvasElement;
 const resolution = document.getElementById('resolution') as HTMLSelectElement;
 const cache = document.getElementById('cache') as HTMLImageElement;
 const timetaken = document.getElementById('timetaken') as HTMLSpanElement;
+const chooseimage = document.getElementById('chooseimage') as HTMLSelectElement;
 
 const g = game.getContext('2d')!;
 
@@ -66,17 +67,28 @@ const drawImage = () => {
     ];
 
     const getSummedColour = (p1Index: vec2, p2Index: vec2) => {
-        const triangleMapIndex = triangleMapBytes * (p2Index[1] + numIterations * (p2Index[0] + numIterations * (p1Index[1] + numIterations * p1Index[0])));
+        const triangleMapIndex =
+            triangleMapBytes *
+            (p2Index[1] + numIterations * (p2Index[0] + numIterations * (p1Index[1] + numIterations * p1Index[0])));
         return Array.from(triangleMapData.data.slice(triangleMapIndex, triangleMapIndex + triangleMapBytes));
     };
 
     //since we are using normalised
-    const startCoord: vec2 = [0,0];
-    const totalSum = [0,0,0,0];
+    const startCoord: vec2 = [0, 0];
+    const totalSum = [0, 0, 0, 0];
 
-    add4Mutate(totalSum, scale4Mutate(getSummedColour(p1Index, p2Index), polygonAreaSigned([startCoord, triangle.p1, triangle.p2])));
-    add4Mutate(totalSum, scale4Mutate(getSummedColour(p2Index, p3Index), polygonAreaSigned([startCoord, triangle.p2, triangle.p3])));
-    add4Mutate(totalSum, scale4Mutate(getSummedColour(p3Index, p1Index), polygonAreaSigned([startCoord, triangle.p3, triangle.p1])));
+    add4Mutate(
+        totalSum,
+        scale4Mutate(getSummedColour(p1Index, p2Index), polygonAreaSigned([startCoord, triangle.p1, triangle.p2]))
+    );
+    add4Mutate(
+        totalSum,
+        scale4Mutate(getSummedColour(p2Index, p3Index), polygonAreaSigned([startCoord, triangle.p2, triangle.p3]))
+    );
+    add4Mutate(
+        totalSum,
+        scale4Mutate(getSummedColour(p3Index, p1Index), polygonAreaSigned([startCoord, triangle.p3, triangle.p1]))
+    );
     scale4Mutate(totalSum, 1 / polygonArea(triangle.points!));
 
     timetaken.innerText = `${Date.now() - startTime} ms`;
@@ -107,7 +119,9 @@ const drawImage = () => {
     //render our triangle
     g.lineWidth = 1;
     g.strokeStyle = 'black';
-    g.fillStyle = `rgba(${Math.floor(totalSum[0])}, ${Math.floor(totalSum[1])}, ${Math.floor(totalSum[2])}, ${Math.floor(totalSum[3])})`;
+    g.fillStyle = `rgba(${Math.floor(totalSum[0])}, ${Math.floor(totalSum[1])}, ${Math.floor(
+        totalSum[2]
+    )}, ${Math.floor(totalSum[3])})`;
     g.beginPath();
     g.moveTo(triangle.p1[0], triangle.p1[1]);
     g.lineTo(triangle.p2[0], triangle.p2[1]);
@@ -165,13 +179,21 @@ game.onmousemove = (e) => {
     draw();
 };
 
+const pics: Record<string, string> = {
+    photo: 'media/photo.png',
+    lines: 'media/test.png',
+    pattern: 'media/sample.png'
+};
+
 const start = async () => {
     numIterations = parseInt(resolution.value, 10);
 
-    //TODO: need a way of storing and looking up a 32-bit per pixel image (HDR)
-    const cacheSrc = `media/cache/summed_photo_${numIterations}.png`;
+    const imageType = chooseimage.value;
 
-    const [image, cacheImage] = await Promise.all([loadImage('media/photo.png'), loadImage(cacheSrc)]);
+    //TODO: need a way of storing and looking up a 32-bit per pixel image (HDR)
+    const cacheSrc = `media/cache/summed_${imageType}_${numIterations}.png`;
+
+    const [image, cacheImage] = await Promise.all([loadImage(pics[imageType]), loadImage(cacheSrc)]);
 
     cache.src = cacheSrc;
 
@@ -184,3 +206,4 @@ const start = async () => {
 start();
 
 resolution.onchange = start;
+chooseimage.onchange = start;

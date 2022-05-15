@@ -80,7 +80,7 @@
     </script>
   </head>
   <body>
-    <h2>Approximated triangle fitting using summed triangle area maps - CPU</h2>
+    <h2>Approximated triangle integration using summed triangle area maps - CPU</h2>
 
     <p>The map generation logic has been disabled for this demo - the pre-computed maps are used instead, see the readme on how to generate these. Move the triangle with the mouse, scale the triangle using the mouse wheel</p>
 
@@ -94,10 +94,22 @@
     </div>
 
     <div class="control">
+        <label>
+            <span class="label-text">Image:</span>
+            <select id="chooseimage">
+                <option selected value="photo">Photo</option>
+                <option value="lines">Lines</option>
+                <option value="pattern">Pattern</option>
+            </select>
+        </label>
+    </div>
+
+    <div class="control">
       <label>
         <span class="label-text">Resolution:</span>
         <select id="resolution">
             <option selected value="16">16</option>
+            <option value="32">32</option>
             <option value="64">64</option>
         </select>
       </label>

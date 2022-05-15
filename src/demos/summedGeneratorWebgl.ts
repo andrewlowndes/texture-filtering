@@ -2,7 +2,7 @@ import { getImageData } from '../utils/getImageData';
 import { createProgramFromShader } from '../webgl/createProgramFromShader';
 
 import { summedGenerator } from '../shaders/summedGenerator';
-import { textureShader } from '../shaders/texture';
+//import { textureShader } from '../shaders/texture';
 
 const game = document.getElementById('game') as HTMLCanvasElement;
 const imagePreview = document.getElementById('image_preview') as HTMLImageElement;
@@ -13,18 +13,18 @@ const timetaken = document.getElementById('timetaken') as HTMLSpanElement;
 const gl = game.getContext('webgl2', { antialias: false, premultipliedAlpha: false });
 
 if (!gl) {
-    throw new Error("No WebGL :(");
+    throw new Error('No WebGL :(');
 }
 
 if (gl.getExtension('EXT_color_buffer_float') === null) {
-    throw new Error("No render to Float32 support :(");
+    throw new Error('No render to Float32 support :(');
 }
 
 const load = (imageData: ImageData, numIterations: number) => {
     const size = Math.pow(numIterations, 2);
     gl.canvas.width = size;
     gl.canvas.height = size;
-    
+
     gl.clearColor(0.0, 0.0, 0.0, 0.0);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
 
@@ -70,10 +70,7 @@ const load = (imageData: ImageData, numIterations: number) => {
     gl.uniform1ui(samplerSizeLocation, size);
 
     const stepLocation = gl.getUniformLocation(shaderProgram, 'uStep');
-    gl.uniform2fv(stepLocation, [
-        imageData.width / numIterations,
-        imageData.height / numIterations
-    ]);
+    gl.uniform2fv(stepLocation, [imageData.width / numIterations, imageData.height / numIterations]);
 
     //we will then use a simple shader to render it directly so we can show it
     /*gl.clear(gl.COLOR_BUFFER_BIT);
@@ -97,9 +94,9 @@ const load = (imageData: ImageData, numIterations: number) => {
 
 const draw = () => {
     const startTime = Date.now();
-    
+
     gl.clear(gl.COLOR_BUFFER_BIT);
-    
+
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
     gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4));

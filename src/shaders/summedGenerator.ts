@@ -46,7 +46,7 @@ export const summedGenerator: Shader = {
             Triangle triangle = Triangle(
                 vec2(p1x, p1y) * uStep,
                 vec2(p2x, p2y) * uStep,
-                vec2(0, 0)
+                vec2(0.0)
             );
 
             //summed triangle coverage
