@@ -53,14 +53,14 @@ const rasteriseTriangle = createShaderSnippetInstance({
                 params: rasteriseCallbackParams,
                 text: () => /* glsl */ `
                     if (isInside) {
-                        for (uint x=range.x; x<range.y; x++) {
+                        for (uint x=range.x; x<=range.y; x++) {
                             ${snippetResult}colour += texelFetch(${snippetResult}texture, ivec2(x, range.z), 0);
                         }
                     } else {
                         //process each outer pixel separately so we have per-pixel shading
                         uint yMax = range.z + uint(1);
 
-                        for (uint x=range.x; x<range.y; x++) {
+                        for (uint x=range.x; x<=range.y; x++) {
                             Aabb bounds = Aabb(vec2(x, range.z), vec2(x + uint(1), yMax));
 
                             //as a test, determine the coverage of the triangle in outside cells and use as antialiasing
@@ -93,7 +93,7 @@ const rasteriseTriangle = createShaderSnippetInstance({
 export const triangleCoverage: ShaderCode = {
     dependencies: [Triangle, triangleArea, rasteriseLines, rasteriseTriangle],
     text: /* glsl */ `
-         vec4 triangleCoverage(Triangle triangle, sampler2D texture) {
+         vec4 triangleCoverage(in Triangle triangle, in sampler2D texture) {
             float area = triangleArea(triangle);
 
             Triangle edges = Triangle(triangle.p2 - triangle.p1, triangle.p3 - triangle.p2, triangle.p1 - triangle.p3);
