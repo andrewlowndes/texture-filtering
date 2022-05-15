@@ -71,8 +71,8 @@ const load = (imageData: ImageData, numIterations: number) => {
 
     const stepLocation = gl.getUniformLocation(shaderProgram, 'uStep');
     gl.uniform2fv(stepLocation, [
-        (imageData.width - 1) / (numIterations - 1),
-        (imageData.height - 1) / (numIterations - 1)
+        imageData.width / numIterations,
+        imageData.height / numIterations
     ]);
 
     //we will then use a simple shader to render it directly so we can show it
